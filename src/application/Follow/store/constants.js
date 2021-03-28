@@ -1,0 +1,8 @@
+export const RESET_FOLLOW = 'follow/RESET_FOLLOW_LIST'
+export const SET_FOLLOW_LIST = 'follow/SET_FOLLOW_LIST'
+export const SET_FOLLOW_TYPE = 'follow/SET_FOLLOW_TYPE'
+export const CHANGE_LOADING = 'follow/CHANGE_LOADING'
+export const SET_FOLLOW_ID = 'follow/SET_FOLLOW_ID'
+export const CHANGE_FOLLOW_PAGE = 'follow/CHANGE_FOLLOW_PAGE'
+export const SET_LASTTIME = 'follow/SET_LASTTIME'
+export const SET_FOLLOW_ISMORE = 'follow/SET_FOLLOW_ISMORE'

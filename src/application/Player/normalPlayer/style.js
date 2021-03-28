@@ -1,0 +1,316 @@
+import styled, { keyframes } from "styled-px2vw";
+import globalStyle from "../../../assets/global-style";
+
+const rotate = keyframes`
+  0%{
+    transform: rotate(0);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+`;
+export const NormalPlayerContainer = styled.div`
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 150;
+  background: ${globalStyle["background-color"]};
+  .background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.6;
+    filter: blur(20px);
+    &.layer {
+      background: ${globalStyle["font-color-desc"]};
+      opacity: 0.3;
+      filter: none;
+    }
+  }
+  &.normal-enter,
+  &.normal-exit-done {
+    .top {
+      transform: translate3d(0, -100px, 0);
+    }
+    .bottom {
+      transform: translate3d(0, 100px, 0);
+    }
+  }
+  &.normal-enter-active,
+  &.normal-exit-active {
+    .top,
+    .bottom {
+      transform: translate3d(0, 0, 0);
+      transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
+    }
+    opacity: 1;
+    transition: all 0.4s;
+  }
+  &.normal-exit-active {
+    opacity: 0;
+  }
+`;
+export const Top = styled.div`
+  position: relative;
+  margin-bottom: 25px;
+  .back {
+    position: absolute;
+    top: 0;
+    left: 6px;
+    z-index: 50;
+    .iconfont {
+      display: block;
+      padding: 9px;
+      font-size: 24px;
+      color: ${globalStyle["font-color-desc"]};
+      font-weight: bold;
+      transform: rotate(90deg);
+    }
+  }
+  /* .title {
+    width: 70%;
+    margin: 0 auto;
+    line-height: 40px;
+    text-align: center;
+    font-size: ${globalStyle["font-size-l"]};
+    color: ${globalStyle["font-color-desc"]};
+    ${globalStyle.noWrap()};
+  }
+  .subtitle {
+    line-height: 20px;
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+    font-size: ${globalStyle["font-size-m"]};
+    color: ${globalStyle["font-color-desc-v2"]};
+    ${globalStyle.noWrap()};
+  } */
+`;
+export const Middle = styled.div`
+  position: fixed;
+  width: 100%;
+  top: 80px;
+  bottom: 170px;
+  white-space: nowrap;
+  font-size: 0;
+  overflow: hidden;
+
+  @media screen and (min-aspect-ratio: 376 / 667) and (max-aspect-ratio: 768 / 1024) {
+    bottom: 24vh;
+  }
+  
+`;
+export const CDWrapper = styled.div`
+  position: absolute;
+  margin: auto;
+  top: 10%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+
+  width: 50vw;
+  height: 50vw;
+
+  .cd {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    .image {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 10px solid rgba(255, 255, 255, 0.1);
+    }
+    .play {
+      animation: ${rotate} 20s linear infinite;
+      &.pause {
+        animation-play-state: paused;
+      }
+    }
+  }
+  .playing_lyric {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 20px;
+    white-space: normal;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  @media screen and (max-aspect-ratio: 376 / 812) {
+    width: 80vw;
+    height: 80vw;
+  }
+
+  @media screen and (min-aspect-ratio: 376 / 812) and (max-aspect-ratio: 376 / 667) {
+    width: 300px;
+    height: 300px;
+  }
+
+  @media screen and (min-aspect-ratio: 376 / 667) and (max-aspect-ratio: 768 / 1024) {
+    width: 60vw;
+    height: 60vw;
+    top: 0;
+    .playing_lyric {
+      margin-top: 16px;
+      line-height: 16px;
+      font-size: ${globalStyle['font-size-s']};
+    }
+  }
+`
+export const LyricContainer = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 0 5%;
+`
+export const LyricWrapper = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  /* left: 50%;
+  transform: translate3d(-50%, 0, 0); */
+  box-sizing: border-box;
+  text-align: center;
+  p {
+    line-height: 38px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: normal;
+    font-size: ${globalStyle["font-size-l"]};
+    &.current {
+      color: #fff;
+    }
+    &.pure {
+      position: relative;
+      top: 30vh;
+    }
+  }
+  @media screen and (min-aspect-ratio: 376 / 667) and (max-aspect-ratio: 768 / 1024) {
+    p {
+      line-height: 28px;
+      font-size: ${globalStyle['font-size-s']}
+    }
+  }
+`
+export const Bottom = styled.div`
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+
+  @media screen and (min-aspect-ratio: 376 / 667) and (max-aspect-ratio: 768 / 1024) {
+    bottom: 30px;
+  }
+`
+
+export const ProgressWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin: 0px auto;
+  padding: 0 0 10px ;
+  .time {
+    color: ${globalStyle["font-color-desc"]};
+    font-size: ${globalStyle["font-size-s"]};
+    flex: 0 0 36px;
+    line-height: 30px;
+    /* width: 34px; */
+    &.time-l {
+      text-align: left;
+    }
+    &.time-r {
+      text-align: right;
+    }
+  }
+  .progress-bar-wrapper {
+    flex: 1;
+  }
+`
+
+export const MoreOperators = styled.div`
+  display: flex;
+  align-items: center;
+  .icon {
+    font-weight: 300;
+    flex: 1;
+    color: ${globalStyle['font-color-desc']};
+    &.disable {
+      color: ${globalStyle["theme-color-shadow"]};
+    }
+    i {
+      font-weight: 300;
+      font-size: 20px;
+
+      &.i-favorite {
+        color: ${globalStyle['theme-color']}
+      }
+    }
+  }
+  .i-left {
+    text-align: right;
+  }
+  .i-center {
+    text-align: center;
+    position: relative;
+    .commentCount {
+      font-size: ${globalStyle['font-size-s']};
+      position: absolute;
+      left: 72px;
+      top: -7px;
+
+    }
+  }
+  .i-right {
+    text-align: left;
+  }
+  .icon-favorite {
+    color: ${globalStyle["theme-color"]};
+  }
+`
+
+export const Operators = styled.div`
+  display: flex;
+  align-items: center;
+  .icon {
+    font-weight: 300;
+    flex: 1;
+    color: ${globalStyle["font-color-desc"]};
+    &.disable {
+      color: ${globalStyle["theme-color-shadow"]};
+    }
+    i {
+      font-weight: 300;
+      font-size: 30px;
+    }
+  }
+  .i-left {
+    text-align: right;
+  }
+  .i-center {
+    padding: 0 20px;
+    text-align: center;
+    i {
+      font-size: 40px;
+    }
+  }
+  .i-right {
+    text-align: left;
+  }
+  .i-list {
+    i {
+      font-size: 28px;
+    }
+  }
+`
+
