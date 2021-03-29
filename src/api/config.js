@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const baseUrl = process.env.NODE_ENV == 'production' ? "http://129.204.236.31:3011" : "http://localhost:3030"
+export const baseUrl = process.env.NODE_ENV == 'production' ? "http://129.204.236.31:3030" : "http://localhost:3030"
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,

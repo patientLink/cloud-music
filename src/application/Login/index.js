@@ -161,7 +161,8 @@ const mapDispatchToProps = dispatch => ({
       }
     })
     .catch(err => {
-      console.log(err)
+      console.log(err.response?.data?.message)
+      fn1(err.response?.data?.message)
     }) 
   }
 })

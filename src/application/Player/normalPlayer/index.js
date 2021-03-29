@@ -278,7 +278,7 @@ function NormalPlayer(props) {
             <div className="icon i-center">
               <i className="iconfont" onClick={() => {
                 if(totalCount > 0) {
-                  getCommentsCount(song.id)
+                  // getCommentsCount(song.id)
                   toggleCommentsList(true)
                 }
                 }}>&#xe607;</i>

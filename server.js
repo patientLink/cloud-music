@@ -1,7 +1,7 @@
 var express = require('express')
 var compression = require('compression')
 
-var port = process.env.PORT || 8010
+var port = process.env.PORT || 12306
 var app = express()
 
 app.use(compression())

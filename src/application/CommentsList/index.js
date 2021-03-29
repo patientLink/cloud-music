@@ -72,20 +72,16 @@ function CommentsList (props) {
   })
 
   useEffect(() => { // 初次进入评论页
-    console.log('comments')
     const params = props.match.params.id
     let [urlId, type] = params.split('+')
-    console.log(urlId, type)
     type = Number(type)
     toggleShowCommentsDispatch(true)
-    handleGetInfo(urlId, type)
+    // handleGetInfo(urlId, type)
     getFirstCommentsDispatch(urlId, type, 99)
   }, [])
 
   useEffect(() => { // 停留在评论页时切歌
       handleGetInfo(id, type)
-      console.log('test')
-      // getFirstCommentsDispatch(id, 0, 99)
   }, [id])
 
   const handleGetInfo = (id, type) => {

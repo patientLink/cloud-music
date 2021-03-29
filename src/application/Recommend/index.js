@@ -16,7 +16,7 @@ function Recommend(props) {
   useEffect(() => {
     !bannerList.length && getBannerDataDispatch()
     !recommendList.length && getRecommendListDataDispatch()
-    console.log(props)
+    // console.log(props)
   }, [])
 
   return (

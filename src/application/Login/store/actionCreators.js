@@ -49,7 +49,7 @@ const changeUserPlaylist = data => ({
 export const getLoginStatus = (dispatch) => {
   getLoginStatusRequest()
   .then(res => {
-    console.log(res)
+    // console.log(res)
     if(res.code === 200) {
       dispatch(changeLoginStatus(true))
       dispatch(changeUserId(res.profile.userId))

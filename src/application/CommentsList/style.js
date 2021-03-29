@@ -33,7 +33,7 @@ export const IntroBlock = styled.div`
   left: 0;
   right: 0; 
   top: 45px;
-  height: 80px;
+  height: 84px;
   padding: 4px 16px;
   box-sizing: border-box;
   background-color: ${globalStyle['background-color']};
@@ -58,21 +58,26 @@ export const IntroBlock = styled.div`
     
     h5 {
       font-size: ${globalStyle['font-size-l']};
-      line-height: 20px;
+      line-height: ${globalStyle['font-size-ll']};
       /* height: ${globalStyle['font-size-ll']}; */
-      max-height: 40px;
+      max-height: 38px;
       /* box-sizing: border-box; */
-      
+      padding-bottom: 1px;
       max-width: 75%;
       ${globalStyle['doubleOmitted']()}
     }
     h6 {
       font-size: ${globalStyle['font-size-m']};
       color: ${globalStyle['theme-color']};
-      line-height: ${globalStyle['font-size-m']};
-      height: ${globalStyle['font-size-m']};
+      /* line-height: ${globalStyle['font-size-m']}; */
+      line-height: 15px;
+      /* height: ${globalStyle['font-size-m']}; */
+      max-height: 30px;
       /* margin-top: 4px; */
       max-width: 75%;
+      padding-bottom: 1px;
+      ${globalStyle['doubleOmitted']()}
+    
     }
   }
 
@@ -82,7 +87,7 @@ export const TypeBar = styled.div`
   position: fixed;
   left: 0;
   right: 0;
-  top: 125px;
+  top: 129px;
   height: 25px;
   display: flex;
   padding-left: 66%;
@@ -120,7 +125,7 @@ export const ContentArea = styled.div`
   position: fixed;
   left: 0;
   right: 0;
-  top: 150px;
+  top: 154px;
   bottom: 0;
   overflow: hidden;
   background-color: ${globalStyle['background-color']};

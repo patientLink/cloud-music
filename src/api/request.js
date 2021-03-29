@@ -72,7 +72,7 @@ export const verifyCaptchaRequest = (number, captcha) => {
 // 手机号码登录请求
 export const phoneLoginRequest = (number, psw) => {
   let md5_password = md5(psw)
-  console.log(md5_password)
+  // console.log(md5_password)
   return axiosInstance.get(`/login/cellphone?phone=${number}&md5_password=${md5_password}`)
 }
 // 获取账号登录状态
