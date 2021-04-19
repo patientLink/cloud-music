@@ -46,7 +46,7 @@ const Scroll = forwardRef((props, ref) => {
   const {pullUp, pullDown, onScroll} = props // 事件
 
   let pullUpDebounce = useCallback(
-    debounce(pullUp, 800)
+    debounce(pullUp, 800, true)
   , [pullUp])
 
   let pullDownDebounce = useCallback(

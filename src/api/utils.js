@@ -21,16 +21,25 @@ export const getCountv2 = (count) => {
 }
 
 
-export const debounce = (func, delay) => {
+export const debounce = (func, delay, immediate=false) => {
   let timer
   return function(...args) {
     if(timer) {
       clearTimeout(timer)
     }
-    timer = setTimeout(() => {
-      func.apply(this, args)
-      clearTimeout(timer)
-    }, delay);
+    if(immediate) {
+      if(!timer) {
+        func.apply(this, args)
+        timer = setTimeout(() => {
+          timer = null
+        }, delay);
+      }
+    } else {
+      timer = setTimeout(() => {
+        func.apply(this, args)
+      }, delay);
+    }
+    
   }
 }
 
