@@ -27,7 +27,8 @@ function PlayList (props) {
     currentSong,
     playList,
     mode,
-    sequencePlayList
+    sequencePlayList,
+    userLikelist
   } = props
 
   const {
@@ -78,6 +79,13 @@ function PlayList (props) {
     setIsShow(false)
     listWrapperRef.current.style[transform] = `translate3d(0, 100%, 0)`
   }, [transform])
+
+  const checkIfFavorit = id => {
+    let res = userLikelist.findIndex(item => item === id) > -1
+    console.log(res)
+    return res
+    // return userLikelist.findIndex(item => item === id) > -1
+  }
 
   const getCurrentIcon = item => {
     const current = currentSong.id === item.id
@@ -241,11 +249,15 @@ function PlayList (props) {
                     <li className="item" key={item.id} onClick={() => handleChangeCurrentIndex(index)}>
                       {getCurrentIcon (item)}
                       <span className="text">{item.name} - {getName(item.ar)}</span>
-                      <span className="like" onClick={e => e.stopPropagation()}>
-                        <i className="iconfont">&#xe8ab;</i>
-                      </span>
+                      {/* <span className="like" onClick={e => e.stopPropagation()}>
+                        {
+                          // checkIfFavorit(item.id) ? 
+                          // <i className="iconfont i-favorite">&#xe8c3;</i>:
+                          <i className="iconfont">&#xe8ab;</i>
+                        }
+                      </span> */}
                       <span className="delete" onClick={e => handleDeleteSong(e, item)}>
-                        <i className="iconfont">&#xe617;</i>
+                        <i className="iconfont">&#xe61a;</i>
                       </span>
                     </li>
                   )
@@ -269,7 +281,8 @@ function PlayList (props) {
 }
 
 const mapStateToProps = state => ({
-  ...state['player']
+  ...state['player'],
+  userLikelist: state['user']['userLikelist']
 })
 
 const mapDispatchToProps = dispatch => ({

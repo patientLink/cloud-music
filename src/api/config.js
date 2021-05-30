@@ -7,7 +7,13 @@ const axiosInstance = axios.create({
   withCredentials: true
 })
 
-
+axiosInstance.interceptors.request.use(
+  config => {
+    return config
+  }, err => {
+    return Promise.reject(err)
+  }
+)
 
 axiosInstance.interceptors.response.use(
   res => {

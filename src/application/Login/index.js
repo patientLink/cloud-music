@@ -11,16 +11,15 @@ function Login(props) {
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
-  // const [captcha, setCaptcha] = useState('')
-  // const [isSent, setIsSent] = useState(true)
-
   const [toastText, setToastText] = useState('')
   const toastRef = useRef()
-  // const captchaRef = useRef()
+  const [pageHeight, setPageHeight] = useState('100vh')
+  const [isfocus, setIsFocus] = useState(false)
 
-  // const timer = useRef(null)
-  // const [count, setCount] = useState(-2)
-
+  useEffect(() => {
+    let height = document.documentElement.clientHeight || document.body.clientHeight
+    setPageHeight((height) + 'px')
+  }, [])
 
   const failCallback = (msg) => {
     setToastText(msg)
@@ -43,100 +42,55 @@ function Login(props) {
     getAccountInfo(phoneNumber, password, failCallback, succeedCallback)
   }
 
-
-  // const handleCounting = () => {
-  //   let innerCount = 60
-  //   timer.current = setInterval(() => {
-      
-  //     setCount(innerCount--)
-  //     console.log(count)
-  //     console.log(innerCount)
-  //     if(innerCount < -1) {
-  //       console.log('<0')
-  //       clearInterval(timer.current)
-  //       timer.current = null
-  //     }
-  //   }, 1000);
-  // }
+  const handleFocus = () => {
+    setIsFocus(true)
+  }
+  const handleBlur = () => {
+    setIsFocus(false)
+  }
 
   return (
-    <LoginContainer>
-      {
-        // isSent ? 
-        // <React.Fragment>
-        //   <i className="iconfont back" onClick={() => setIsSent(false)}>&#xe604;</i>
-        //   <header>
-        //     <h1>输入短信验证码</h1>
-        //     <h4>验证码已发送至 {phoneNumber}, 请在下方输入4位验证码</h4>
-        //   </header>
-        //   <CaptchaContainer>
-        //     <input
-        //       type="tel"
-        //       maxLength="4"
-        //       ref={captchaRef}
-        //       onChange={(e) => {
-        //         setCaptcha(e.currentTarget.value)
-        //       }}
-        //       value={captcha}
-        //     />
-        //     {
-        //       [0,0,0,0].map((item, index) => {
-        //         return (
-        //           <div 
-        //             className="captcha" 
-        //             key={index}
-        //             onClick={() => {
-        //               captchaRef.current.focus()
-        //             }}
-        //           >{captcha[index] || ''}</div>
-        //         )
-        //       })
-        //     }
-        //   </CaptchaContainer>
-        //   {
-        //     count < 0 ? 
-        //     <p onClick={handleCheck}>重发验证码</p> :
-        //     <p>{count}s后 可重新发送验证码</p>
-        //   }
-        // </React.Fragment>
-        // :
-        <React.Fragment>
-          <i className="iconfont" onClick={() => props.history.goBack()}>&#xe61a;</i>
-          <header>
-            <h1>登录 网易云音乐</h1>
-          </header>
-          <img className="logo" src={require('./cloud.jpg')}></img>
-          
-          <LoginBox>
-            <input 
-              className="input_number" 
-              placeholder="请输入手机号" 
-              type="tel"
-              maxLength="11"
-              onChange={(e) => {
-                setPhoneNumber(e.currentTarget.value)
-              }}
-              value={phoneNumber}
-              />
-            <input
-              className="input_psw"
-              placeholder="请输入密码"
-              type="password"
-              onChange={(e) => {
-                setPassword(e.currentTarget.value)
-              }}
-              value={password}
+    <LoginContainer pageHeight={pageHeight} isfocus={isfocus}>
+      <React.Fragment>
+        <i className="iconfont" onClick={() => props.history.goBack()}>&#xe61a;</i>
+        <header>
+          <h1>登录 网易云音乐</h1>
+        </header>
+        <img className="logo" src={require('./cloud.jpg')}></img>
+        
+        <LoginBox isfocus={isfocus}>
+          <input 
+            className="input_number" 
+            placeholder="请输入手机号" 
+            type="tel"
+            maxLength="11"
+            onChange={(e) => {
+              setPhoneNumber(e.currentTarget.value)
+            }}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            value={phoneNumber}
             />
-            <span 
-              className={phoneNumber.length === 11 ? 'checked button' : 'button'}
-              onClick={handleCheck}
-              >
-                {/* 获取验证码 */}
-                登录
-            </span>
-          </LoginBox>          
-        </React.Fragment>
-      }
+          <input
+            className="input_psw"
+            placeholder="请输入密码"
+            type="password"
+            onChange={(e) => {
+              setPassword(e.currentTarget.value)
+            }}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            value={password}
+          />
+          <span 
+            className={phoneNumber.length === 11 ? 'checked button' : 'button'}
+            onClick={handleCheck}
+            >
+              {/* 获取验证码 */}
+              登录
+          </span>
+        </LoginBox>          
+      </React.Fragment>
       <Toast text={toastText} raise={true} ref={toastRef}/>
     </LoginContainer>
     
@@ -154,6 +108,11 @@ const mapDispatchToProps = dispatch => ({
         return
       } else if(code === 200) {
         if(account) {
+          // let tempArr = cookie.split(';;')
+          // tempArr.forEach(item => {
+          //   document.cookie = item
+          // })
+          // console.log(document.cookie)
           dispatch(changeUserId(account.id))
           dispatch(changeLoginStatus(true))
           fn2()

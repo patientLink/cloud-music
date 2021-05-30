@@ -54,6 +54,7 @@ function Player(props) {
   const [duration, setDuration] = useState(0)
   const preSong = useRef({})
   const [modeText, setModeText] = useState('')
+  const [errorText, setErrorText] = useState('')
   const [currentPlayingLyric, setPlayingLyric] = useState('')
 
   // console.log('1')
@@ -64,6 +65,7 @@ function Player(props) {
 
   const audioRef = useRef()
   const toastRef = useRef()
+  const errToastRef = useRef()
   const songReady = useRef(true)
 
   const currentLyric = useRef()
@@ -153,11 +155,15 @@ function Player(props) {
     })
   }
 
-  const handleError = () => {
+  const handleError = (err) => {
+    console.log(err)
+    console.log(audioRef.current)
     songReady.current = true
     togglePlayingDispatch(false)
     currentLyric.current && currentLyric.current.stop()
-    alert("播放出错")
+    setErrorText('歌曲未被授权播放') 
+    errToastRef.current.show()
+    // alert("播放出错")
   }
 
   const handlePreSongClear = () => {
@@ -166,6 +172,11 @@ function Player(props) {
 
   const clickPlaying = (e, state) => {
     e.stopPropagation()
+    if(currentSong && currentSong.privilege && currentSong.privilege.fee === 1) {
+      // 需要vip权限
+      errToastRef.current.show()
+      return
+    }
     togglePlayingDispatch(state)
     if(currentLyric.current) {
       currentLyric.current.togglePlay(currentTime * 1000)
@@ -189,11 +200,12 @@ function Player(props) {
     const newTime = curPercent * duration
     setCurrentTime(newTime)
     audioRef.current.currentTime = newTime
-    if(!playing) {
-      togglePlayingDispatch(true)
-    }
+    // if(!playing) {
+    //   togglePlayingDispatch(true)
+    // }
     if(currentLyric.current) {
       currentLyric.current.seek(newTime * 1000)
+      if(!playing) currentLyric.current.stop()
     }
   }
 
@@ -308,8 +320,9 @@ function Player(props) {
           currentLineNum={currentLineNum}
         /> 
       }
-      <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={handleEnd} onError={handleError}></audio>
+      <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={handleEnd} onError={handleError} autoPlay={false}></audio>
       <Toast text={modeText} ref={toastRef}></Toast>
+      <Toast text={errorText} ref={errToastRef} raise={true}></Toast>
       <PlayList handlePreSongClear={handlePreSongClear}></PlayList>
       {/* <CommentsList 
         enterLoading={enterLoading} 

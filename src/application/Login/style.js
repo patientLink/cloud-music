@@ -3,7 +3,7 @@ import globalStyle from '../../assets/global-style'
 
 export const LoginContainer = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: ${props => props.pageHeight};
   padding: 8%;
   box-sizing: border-box;
   position: fixed;
@@ -53,6 +53,8 @@ export const LoginContainer = styled.div`
     width: 108px;
     height: 108px;
     margin-top: 100px;
+    opacity: ${props => props.isfocus ? '0' : '100%'};
+    transition: opacity 0.5s;
   }
 
   p {
@@ -70,6 +72,9 @@ export const LoginBox = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+
+  transition: transform 0.5s;
+  transform: ${props => props.isfocus ? 'translateY(-150px)' : 'translateY(0px)'};
 
   input {
     width: 280px;

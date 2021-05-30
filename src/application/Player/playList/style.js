@@ -105,7 +105,11 @@ export const ListContent = styled.div `
       .iconfont {
         font-size: ${globalStyle["font-size-l"]};
         color: ${globalStyle["theme-color"]};
+          &.i-favorite {
+          color: ${globalStyle['theme-color']}
+        }
       }
+
       
     }
     .delete {
