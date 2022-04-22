@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react'
 import {LoginContainer, LoginBox} from './style'
-import {phoneLoginRequest, getLoginStatusRequest} from '../../api/request'
+import {phoneLoginRequest} from '../../api/request'
 import Toast from '../../baseUI/toast'
 import {connect} from 'react-redux'
-import {changeUser, changeLoginStatus, changeUserId} from './store/actionCreators'
+import {changeLoginStatus, changeUserId} from './store/actionCreators'
 
 function Login(props) {
   // console.log(props)
-  const {getAccountInfo, getLoginStatus} = props
+  const {getAccountInfo} = props
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
@@ -28,9 +28,11 @@ function Login(props) {
   }
 
   const succeedCallback = () => {
+    setToastText('登录成功!')
+    toastRef.current.show()
     setTimeout(() => {
       props.history.goBack()
-    }, 1000);
+    }, 500);
   }
 
   const handleCheck = () => {
@@ -56,7 +58,7 @@ function Login(props) {
         <header>
           <h1>登录 网易云音乐</h1>
         </header>
-        <img className="logo" src={require('./cloud.jpg')}></img>
+        <img className="logo" src={require('./cloud.jpg')} alt="logo"></img>
         
         <LoginBox isfocus={isfocus}>
           <input 
@@ -108,11 +110,6 @@ const mapDispatchToProps = dispatch => ({
         return
       } else if(code === 200) {
         if(account) {
-          // let tempArr = cookie.split(';;')
-          // tempArr.forEach(item => {
-          //   document.cookie = item
-          // })
-          // console.log(document.cookie)
           dispatch(changeUserId(account.id))
           dispatch(changeLoginStatus(true))
           fn2()

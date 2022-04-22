@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const baseUrl = process.env.NODE_ENV == 'production' ? "http://129.204.236.31:3030" : "http://localhost:3030"
+export const baseUrl = process.env.NODE_ENV === 'production' ? "http://129.204.236.31:3030" : "http://localhost:3030"
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,
@@ -20,6 +20,10 @@ axiosInstance.interceptors.response.use(
     return res.data
   },
   err => {
+    console.dir(err)
+    if(err.response.data.code === 301) {
+      window._history.push('/login')
+    }
     return Promise.reject(err)
   }
 )
@@ -120,6 +124,7 @@ export const categoryTypes = [{
 },
 ]
 
+// 用于按姓名字母排序歌手
 export const alphaTypes = [{
   key: "a",
   name: "A"
@@ -226,10 +231,17 @@ export const alphaTypes = [{
 }
 ]
 
-export const HEADER_HEIGHT = 45
+export const HEADER_HEIGHT = 45 // Header 组件高度
 
-export const playMode = {
-  sequence: 0,
-  loop: 1,
-  random: 2
+export const playMode = { // 播放模式
+  sequence: 0, // 顺序播放
+  loop: 1, // 循环播放
+  random: 2 // 随机播放
 }
+
+// 播放列表PlayList或操作列表OperationsList中手动将列表组件往下滑退所需距离
+export const listBoxTouchMoveDistance = [
+  200, // 播放列表PlayList、操作列表OperationsList(type = 0)
+  250, // 操作列表OperationsList(type = 1)
+  200, // 操作列表OperationsList(type = 2)
+]

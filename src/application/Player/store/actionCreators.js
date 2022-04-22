@@ -31,6 +31,11 @@ export const changePlayMode = data => ({
   data
 })
 
+export const changeFmMode = data => ({
+  type: actionTypes.CHANGE_FM_MODE,
+  data
+})
+
 export const changeCurrentIndex = data => ({
   type: actionTypes.SET_CURRENT_INDEX,
   data
@@ -56,6 +61,11 @@ export const insertSong = data => ({
   data
 })
 
+export const insertNextSong = data => ({
+  type: actionTypes.INSERT_NEXT_SONG,
+  data
+})
+
 
 export const getSongDetail = id => {
   return dispatch => {
@@ -63,5 +73,18 @@ export const getSongDetail = id => {
       let song = data.songs[0]
       dispatch(insertSong(song))
     })
+  }
+}
+
+export const resetPlayer = () => {
+  return dispatch => {
+    dispatch(changePlayList([]))
+    dispatch(changeSequencePlayList([]))
+    dispatch(changeCurrentIndex(-1))
+    dispatch(changeShowPlayList(false))
+    dispatch(changeCurrentSong({}))
+    dispatch(changePlayingState(false))
+    dispatch(changeFullScreen(false))
+    dispatch(changeFmMode(false))
   }
 }

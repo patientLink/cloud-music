@@ -50,5 +50,21 @@ export const GlobalStyle = createGlobalStyle`
 	a {
 		text-decoration: none;
 		color: #fff;
-	}  
+	} 
+	.btn-to-deep {
+		position: relative;
+
+		&.btn-to-deep-mouseOn::after {
+			content: '';
+			display: block;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			right: 0;
+			background-color: rgba(0,0,0,.2);
+			transition: all .6s .3s;
+		}
+	}
 `

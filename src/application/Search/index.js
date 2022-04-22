@@ -4,7 +4,7 @@ import {Container, ShortcutWrapper, HotKey, List, ListItem, SongItem} from './st
 import SearchBox from '../../baseUI/search-box'
 import {connect} from 'react-redux'
 import { changeEnterLoading, getHotKeyWords, getSuggestList } from './store/actionCreators'
-import {getSongDetail} from '../Player/store/actionCreators'
+import { getSongDetail, resetPlayer } from '../Player/store/actionCreators'
 import Scroll from '../../baseUI/scroll'
 import LazyLoad, { forceCheck } from 'react-lazyload'
 import {getName} from '../../api/utils'
@@ -17,14 +17,16 @@ function Search(props) {
     enterLoading,
     suggestList,
     songsCount,
-    songsList
+    songsList,
+    isFmMode
   } = props
 
   const {
     getHotKeyWordsDispatch,
     changeEnterLoadingDispatch,
     getSuggestListDispatch,
-    getSongDetailDispatch
+    getSongDetailDispatch,
+    clearDispatch
   } = props
 
   const [show, setShow] = useState(false)
@@ -45,6 +47,9 @@ function Search(props) {
     getSuggestListDispatch(q)
   }, [])
   const selectItem = (e, id) => {
+    if(isFmMode) {
+      clearDispatch()
+    }
     getSongDetailDispatch(id)
     musicNoteRef.current.startAnimation({
       x: e.nativeEvent.clientX,
@@ -67,7 +72,7 @@ function Search(props) {
         {
           list.map((item) => {
             return (
-              <li className="item" key={item.first} onClick={() => setQuery(item.first)}>
+              <li className="item btn-to-deep" key={item.first} onClick={() => setQuery(item.first)}>
                 <span>{item.first}</span>
               </li>
             )
@@ -88,7 +93,7 @@ function Search(props) {
             return (
               <ListItem key={item.accountId+""+index} onClick={() => props.history.push(`/singers/${item.id}`)}>
                 <div className="img_wrapper">
-                  <LazyLoad placeholder={<img width="100%" height="100%" src={require('./singer.png')} />}>
+                  <LazyLoad placeholder={<img width="100%" height="100%" src={require('./singer.png')} alt="" />}>
                     <img src={item.picUrl || require('./singer.png')} width="100%" height="100%" alt="music" />  
                   </LazyLoad>
                 </div>
@@ -101,32 +106,10 @@ function Search(props) {
     )
   }
   const renderAlbum = () => {
-    let albums = suggestList.albums
     let playlists = suggestList.playlists
     if(!playlists || !playlists.length) return
-    // if((!albums || !albums.length) && (!playlists || !playlists.length) ) return
     return (
       <List>
-        {/* {
-          albums && albums.length > 0 ? 
-          <React.Fragment>
-            <h1 className="title">相关专辑</h1>
-            {
-              albums.map((item, index) => {
-                return (
-                  <ListItem key={item.copyrightId + "" + index} onClick={() => props.history.push(`/album/${item.id}`)}>
-                    <div className="img_wrapper">
-                      <LazyLoad placeholder={<img width="100%" height="100%" src={require('./music.png')} alt="music" />}>
-                        <img src={item.coverImgUrl || require('./music.png')} width="100%" height="100%" alt="music"/>
-                      </LazyLoad>
-                    </div>
-                    <span className="name">{item.name}</span>
-                  </ListItem>
-                )
-              })
-            }
-          </React.Fragment> : ''
-        } */}
         {
           playlists && playlists.length > 0 ? 
           <React.Fragment>
@@ -213,7 +196,8 @@ function Search(props) {
 
 const mapStateToProps = state => ({
   ...state['search'],
-  songsCount: state['player']['playList'].length
+  songsCount: state['player']['playList'].length,
+  isFmMode: state['player']['isPersonalFm']
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -228,6 +212,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getSongDetailDispatch(id) {
     dispatch(getSongDetail(id))
+  },
+  clearDispatch() {
+    dispatch(resetPlayer())
   }
 })
 

@@ -53,7 +53,7 @@ const MarqueeContainer = styled.div`
 `
 
 function Marquee(props) {
-  const {width, lineHeight, fontSize, color, txt} = props
+  const {txt, active} = props
   const headerRef = useRef()
   const containerRef = useRef()
   const lengthRatio = useRef(0)
@@ -64,15 +64,15 @@ function Marquee(props) {
   }, [txt])
 
   useEffect(() => {
-    // console.log('computed')
+    if(!active) return
     const currentWidth = parseFloat(getComputedStyle(headerRef.current)['width'])
     const containerWidth = parseFloat(getComputedStyle(containerRef.current)['width'])
-    // console.log(currentWidth, containerWidth)
+    console.log(currentWidth, containerWidth)
     if(containerWidth < currentWidth) {
       setFlow(true)
       lengthRatio.current = ((currentWidth / containerWidth) * 6) | 0
     }
-  }, [txt , headerRef.current, containerRef.current])
+  }, [txt, active, headerRef.current, containerRef.current])
 
   return (
     <MarqueeContainer {...props} ref={containerRef} ratio={lengthRatio.current}>

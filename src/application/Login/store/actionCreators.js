@@ -1,14 +1,16 @@
 import * as actionTypes from './constants'
 import {
   getLoginStatusRequest, 
-  phoneLoginRequest,
   getUserDetail,
   getUserSubcount,
   getUserLevel,
   logoutRequest,
   getUserLikelist,
   getUserPlaylist,
-  likeMusic
+  getUserArtistslist,
+  likeMusic,
+  collectAlbum,
+  collectArtist
 } from '../../../api/request'
 
 export const changeUserId = data => ({
@@ -31,6 +33,11 @@ const changeUserSubcount = data => ({
   data
 })
 
+const changeUserSublist = data => ({
+  type: actionTypes.CHANGE_USER_SUBLIST,
+  data
+})
+
 const changeUserLevel = data => ({
   type: actionTypes.CHANGE_USER_LEVEL,
   data
@@ -49,8 +56,9 @@ const changeUserPlaylist = data => ({
 export const getLoginStatus = (dispatch) => {
   getLoginStatusRequest()
   .then(res => {
-    // console.log(res)
-    if(res.code === 200) {
+    res = res.data
+    if(res.code === 200 && res.account && res.profile) {
+      console.log('已登录')
       dispatch(changeLoginStatus(true))
       dispatch(changeUserId(res.profile.userId))
     }
@@ -72,6 +80,11 @@ export const getUserMore = (id) => (dispatch) => {
       dispatch(changeUserSubcount(res))
     }
   })
+  getUserArtistslist().then(res => {
+    if(res.code === 200) {
+      dispatch(changeUserSublist(res.data))
+    }
+  })
   getUserLevel().then(res => {
     if(res.code === 200) {
       res.data && dispatch(changeUserLevel(res.data))
@@ -80,6 +93,42 @@ export const getUserMore = (id) => (dispatch) => {
   getUserLikelist(id).then(res => {
     if(res.code === 200) {
       res.ids && dispatch(changeUserLikelist(res.ids))
+    }
+  })
+  getUserPlaylist(id).then(res => {
+    if(res.code === 200) {
+      if(res.playlist && res.playlist.length > 0 ) {
+        let list = {
+          own: [],
+          collect: []
+        }
+        res.playlist.forEach(item => {
+          if(item.creator && item.creator.userId === id) {
+            list.own.push(item)
+          } else {
+            list.collect.push(item)
+          }
+        })
+        dispatch(changeUserPlaylist(list))
+      }
+    }
+  })
+}
+
+export const getUserMorePlayInfos = (id) => dispatch => {
+  getUserSubcount().then(res => {
+    if(res.code === 200) {
+      dispatch(changeUserSubcount(res))
+    }
+  })
+  getUserLikelist(id).then(res => {
+    if(res.code === 200) {
+      res.ids && dispatch(changeUserLikelist(res.ids))
+    }
+  })
+  getUserArtistslist().then(res => {
+    if(res.code === 200) {
+      dispatch(changeUserSublist(res.data))
     }
   })
   getUserPlaylist(id).then(res => {
@@ -116,8 +165,37 @@ export const likeMusicAndRefresh = (id, like) => (dispatch, getState) => {
     }
   })
   .catch(err => {
-    console.log('操作失败')
+    console.log(err.response.data.msg)
+    return Promise.reject(err)
   })
+}
+
+export const collectAlbumAndRefresh = (t, id) => (dispatch, getState) => {
+  const {userId} = getState()['user']
+  collectAlbum(t, id)
+  .then(res => {
+    if(res.code === 200) {
+      dispatch(getUserMorePlayInfos(userId))
+    }
+  })
+  .catch(err => {
+    console.log(err.response.data.msg)
+    return Promise.reject(err)
+  }) 
+}
+
+export const collectArtistAndRefresh = (t, id) => (dispatch, getState) => {
+  const {userId} = getState()['user']
+  collectArtist(t, id)
+  .then(res => {
+    if(res.code === 200) {
+      dispatch(getUserMorePlayInfos(userId))
+    }
+  })
+  .catch(err => {
+    console.log(err.response.data.msg)
+    return Promise.reject(err)
+  }) 
 }
 
 export const clearUser = (dispatch) => {

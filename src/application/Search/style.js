@@ -53,6 +53,9 @@ export const HotKey = styled.div`
     background: ${globalStyle["highlight-background-color"]};
     font-size: ${globalStyle["font-size-m"]};
     color: ${globalStyle["font-color-desc"]};
+    &::after {
+      border-radius: 6px;
+    }
   }
 `
 

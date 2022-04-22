@@ -110,20 +110,19 @@ export const Block = styled.div`
       top: 0;
       
     }
-
-    .btn {
-      position: absolute;
-      font-size: ${globalStyle['font-size-l']};
-      right: 5px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
   }
-
-  &.my-favourite {
+  .btn {
+    position: absolute;
+    font-size: ${globalStyle['font-size-l']};
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.normal-block {
     padding: 10px;
     position: relative;
-    .favourite-icon {
+    
+    .normal-icon {
       width: 36px;
       height: 36px;
       margin-right: 10px;
@@ -132,32 +131,40 @@ export const Block = styled.div`
       text-align: center;
       line-height: 36px;
       font-size: ${globalStyle['font-size-xl']};
+    }
+    span {
+      font-size: ${globalStyle['font-size-m']};
+    }
+  }
+
+  &.daily-recommend {
+    .daily-recommend-icon {
+      color: ${globalStyle['light-green-color']};
+    }
+  }
+
+  &.personal-fm {
+    .fm-icon {
+      color: ${globalStyle['theme-color']};
+    }
+  }
+
+  &.my-favourite {
+    .favourite-icon {
       color: ${globalStyle['warning-color']};
     }
-
     .favourite-text {
       height: 100%;
       display: flex;
       flex-flow: column nowrap;
       justify-content: space-evenly;
       align-items: flex-start;
-      
       span {
-        font-size: ${globalStyle['font-size-m']};
-
         &:last-of-type {
           font-size: ${globalStyle['font-size-s']};
           color: ${globalStyle['font-color-desc-v2']};
         }
       }
-    }
-
-    .btn {
-      position: absolute;
-      font-size: ${globalStyle['font-size-l']};
-      right: 5px;
-      top: 50%;
-      transform: translateY(-50%);
     }
   }
 

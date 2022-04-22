@@ -11,7 +11,8 @@ const defaultState = {
   userPlaylist: {
     own: [],
     collect: []
-  }
+  },
+  userSublist: []
 }
 
 export default (state = defaultState, action) => {
@@ -31,6 +32,8 @@ export default (state = defaultState, action) => {
       return producer('userLikelist')
     case actionTypes.CHANGE_USER_PLAYLIST:
       return producer('userPlaylist')
+    case actionTypes.CHANGE_USER_SUBLIST:
+      return producer('userSublist')
     default: 
       return state
   }

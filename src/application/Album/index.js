@@ -2,21 +2,21 @@ import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
 import {
   Container, 
   TopDesc, 
-  Menu,
-  SongList,
-  SongItem
+  Menu
 } from './style'
 import {CSSTransition} from 'react-transition-group'
 import Header from '../../baseUI/header'
 import Scroll from '../../baseUI/scroll'
-import {getCount, getName, isEmptyObject} from '../../api/utils'
+import {getCount, isEmptyObject} from '../../api/utils'
 import globalStyle from '../../assets/global-style'
 import {connect} from 'react-redux'
-import { changeEnterLoading, getAlbumList } from './store/actionCreators'
+import { updateCurrentAlbum, getAlbumList } from './store/actionCreators'
 import { getFirstPageCommentsList } from '../CommentsList/store/actionCreators'
+import { collectAlbumAndRefresh } from '../Login/store/actionCreators'
 import SongsList from '../SongsList'
 import {HEADER_HEIGHT} from '../../api/config'
 import MusicNote from '../../baseUI/music-note'
+import { getAlbumAllTracksRequest } from '../../api/request'
 
 function Album(props) {
   const [showStatus, setShowStatus] = useState(true)
@@ -28,16 +28,39 @@ function Album(props) {
 
   const id = props.match.params.id
 
-  const {currentAlbum, enterLoading, songsCount} = props
-  const {getAlbumDataDispatch, getCommentsDispatch} = props
+  const {
+    currentAlbum, 
+    enterLoading, 
+    songsCount, 
+    userPlaylist
+  } = props
+  const {
+    getAlbumDataDispatch, 
+    updateCurrentAlbumDispatch,
+    getCommentsDispatch, 
+    collectAlbumDispatch
+  } = props
+
+  const ownListIds = useMemo(() => userPlaylist.own.map(item => item.id), [userPlaylist])
+  const collectListIds = useMemo(() => userPlaylist.collect.map(item => item.id), [userPlaylist])
+
 
   useEffect(() => {
     getAlbumDataDispatch(id)
   }, [getAlbumDataDispatch, id])
 
-  // let collectCount = useMemo(() => {
-    
-  // }, [currentAlbum]) 
+  useEffect(() => {
+    if(currentAlbum.tracks && currentAlbum.tracks.length !== currentAlbum.trackCount) {
+      getAlbumAllTracksRequest(id).then(res => {
+        if(res.code === 200) {
+          updateCurrentAlbumDispatch({
+            ...currentAlbum,
+            tracks: res.songs
+          })
+        }
+      })
+    }
+  }, [currentAlbum])
 
   const musicAnimation = (x, y) => {
     musicNoteRef.current.startAnimation({x, y})
@@ -75,7 +98,6 @@ function Album(props) {
           <div className="play_count">
             <i className="iconfont play">&#xe619; </i>
             <span className="count">
-              {/* {(currentAlbum.subscribedCount/10000).toFixed(1)} 万 */}
               {getCount(currentAlbum.playCount)}
             </span>
           </div>
@@ -103,6 +125,29 @@ function Album(props) {
   const renderMenu = () => {
     return (
       <Menu>
+        {
+          ownListIds.find(item => item === currentAlbum.id) ||
+          collectListIds.find(item => item === currentAlbum.id) ? 
+          ownListIds[0] === currentAlbum.id ? 
+          (
+            <div className="btn-unable">
+              <i className="iconfont">&#xe640;</i>
+              已收藏
+            </div>
+          ) :
+          (
+            <div onClick={() => collectAlbumDispatch(2, currentAlbum.id)}>
+              <i className="iconfont">&#xe640;</i>
+              已收藏
+            </div>
+          ) :
+          (
+          <div onClick={() => collectAlbumDispatch(1, currentAlbum.id)}>
+            <i className="iconfont">&#xe606;</i>
+            {currentAlbum.subscribedCount === 0 ? '收藏' : getCount(currentAlbum.subscribedCount)}
+          </div>
+          )
+        }
         <div onClick={() => {
           if(currentAlbum.commentCount > 0) {
             getCommentsDispatch(currentAlbum.id)
@@ -116,14 +161,6 @@ function Album(props) {
           <i className="iconfont">&#xe602;</i>
           分享
         </div>
-        <div>
-          <i className="iconfont">&#xe606;</i>
-          收藏
-        </div>
-        <div>
-          <i className="iconfont">&#xe608;</i>
-          更多
-        </div>
       </Menu>
     )
   }
@@ -134,7 +171,6 @@ function Album(props) {
       timeout={400}
       classNames="fly"
       appear={true}
-      unmountOnExit
       onExited={props.history.goBack}
     >
       <Container play={songsCount}>
@@ -151,9 +187,8 @@ function Album(props) {
                 {renderTopDesc()}
                 {renderMenu()}
                 <SongsList 
-                  collectCount={getCount(currentAlbum.subscribedCount)} 
-                  showCollect={true} 
                   songs={currentAlbum.tracks}
+                  trackCount={currentAlbum.trackCount}
                   showBackground={true}
                   musicAnimation={musicAnimation}
                 ></SongsList>
@@ -164,22 +199,27 @@ function Album(props) {
         <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
-    
   )
 }
 
 const mapStateToProps = state => ({
   ...state['album'],
-  songsCount: state['player']['playList'].length
+  songsCount: state['player']['playList'].length,
+  userPlaylist: state['user']['userPlaylist']
 })
 
 const mapDispatchToProps = dispatch => ({
   getAlbumDataDispatch(id) {
-    dispatch(changeEnterLoading(true))
     dispatch(getAlbumList(id))
+  },
+  updateCurrentAlbumDispatch(data) {
+    dispatch(updateCurrentAlbum(data))
   },
   getCommentsDispatch(id) {
     dispatch(getFirstPageCommentsList(id, 2, 99))
+  },
+  collectAlbumDispatch(t, id) {
+    dispatch(collectAlbumAndRefresh(t, id))
   }
 })
 

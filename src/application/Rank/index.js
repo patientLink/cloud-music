@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {connect} from 'react-redux'
 import {getRankList} from './store/actionCreators'
-import {filterIndex} from '../../api/utils'
+import {filterIndex, getCount} from '../../api/utils'
 import {Container, List, ListItem, SongList} from './style'
 import Scroll from '../../baseUI/scroll'
 import {renderRoutes} from 'react-router-config'
@@ -36,6 +36,10 @@ function Rank(props) {
                 >
                 <div className="img_wrapper">
                   <img src={item.coverImgUrl} alt="" />
+                  <span className="play_count">
+                    <i className="iconfont">&#xe65d;</i>
+                    { getCount(item.playCount)}
+                  </span>
                   <div className="decorate"></div>
                   <span className="update_frequency">{item.updateFrequency}</span>
                 </div>
@@ -53,7 +57,7 @@ function Rank(props) {
       <SongList>
         {
           list.map((item, index) => {
-            return <li key={index}>{index+1}. {item.first} - {item.second}</li>
+            return <li className="btn-to-deep" key={index}>{index+1}. {item.first} - {item.second}</li>
           })
         }
       </SongList>

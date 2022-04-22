@@ -33,31 +33,36 @@ const initState = () => ({
   }
 })
 
+function handleTitle(obj) {
+  return obj.reduce((acc, cur) => {
+    let desc = cur.desc
+    let tags = cur.tags?.length ? '、' + cur.tags.join('、') : ''
+    let res = desc + tags
+    return acc + '  ' + res
+  }, '')
+}
+
 function reducer(state, action) {
   switch (action.type) {
     case 'CHANGE_USER_STATE':
-      console.log('change_state')
       return {...state, state: action.data}
     case 'CHANGE_USER_PLAYLIST': 
-      console.log('change_playlist')
       return {...state, playlist: action.data}
     case 'RESET_USER_INFO':
       return initState()
+    default: 
   }
 }
 
 function User(props) {
   const [showStatus, setShowStatus] = useState(true)
   const [userInfo, dispatch] = useReducer(reducer, initState())
-  // console.log(props)
   const {
     playing,
-    fullScreen,
     userId
   } = props
 
   const {
-    toggleFullScreenDispatch,
     toggleShowCommentsListDispatch
   } = props
 
@@ -100,16 +105,15 @@ function User(props) {
     initialHeight.current = h
     layer.current.style.top = `${h - OFFSET}px`
     songScroll.current.refresh()
-    console.log('refresh')
   }, [])
-
-  // const musicAnimation = (x, y) => {
-  //   musicNoteRef.current.startAnimation({x, y})
-  // }
 
   const handleJump = useCallback((id) => {
     toggleShowCommentsListDispatch(false)
     props.history.push(`/album/${id}`)
+  }, [])
+
+  const handleJumpToArtistPage = useCallback((id) => {
+    props.history.push(`/singers/${id}`)
   }, [])
 
   const handleRefresh = useCallback(() => {
@@ -169,9 +173,6 @@ function User(props) {
       appear={true}
       unmountOnExit
       onExited={() => {
-        // if(playing && !fullScreen) {
-        //   toggleFullScreenDispatch(true)
-        // }
         props.history.goBack()
       }}
     >
@@ -185,12 +186,20 @@ function User(props) {
           <div className="filter"></div>
         </ImgWrapper>
         <InfoContent ref={InfoContentRef} gender={userInfo.state['profile']['gender']}>
-          <img className="avatarImg" src={(userInfo.state['profile']['avatarUrl']) || require('./defaultAvatar.jpg')} />
+          <img className="avatarImg" src={(userInfo.state['profile']['avatarUrl']) || require('./defaultAvatar.jpg')} alt="" />
           <div className="detail">
             <span className="name">{userInfo.state['profile']['nickname']}</span>
+            {
+              userInfo.state?.profile?.authStatus ? 
+              <div className='detail'>
+                <img className="detailIcon" src={userInfo.state.profile.avatarDetail.identityIconUrl} alt="" />
+                <span className="detailInfo">{handleTitle(userInfo.state.profile.allAuthTypes)}</span>
+              </div> : null
+            }
             <div className="follow">
-              <span onClick={() => props.history.push(`/follow/${props.match.params.id}`)}>关注 {userInfo.state['profile']['follows']} </span>
-              <span onClick={() => props.history.push(`/followed/${props.match.params.id}`)}>粉丝 {userInfo.state['profile']['followeds']} </span>
+              <span className='followInfo' onClick={() => props.history.push(`/follow/${props.match.params.id}`)}>关注 {userInfo.state['profile']['follows']} </span>
+              <span className='followInfo' onClick={() => props.history.push(`/followed/${props.match.params.id}`)}>粉丝 {userInfo.state['profile']['followeds']} </span>
+              
             </div>
             <div className="class">
               <span className="tag gender">
@@ -200,14 +209,21 @@ function User(props) {
                   :
                   <span className="iconfont icon">&#xe6c3;</span>
                 }
-                <span> {getGen()}</span>
+                <span>{getGen()}</span>
                 
               </span>
               <span className="tag">Lv.{userInfo.state['level']}</span>
             </div>
             {
+              userInfo.state?.profile?.artistId ? 
+              <button className="artistPage_btn" onClick={() => handleJumpToArtistPage(userInfo.state.profile.artistId)}>
+                <span className="iconfont">&#xe60c;</span>
+                歌手页
+              </button> : null
+            }
+            {
               isMyself ? 
-                '' 
+                null 
                 :
                 userInfo.state['profile']['followed'] ? 
                   <button className="followed">
@@ -226,7 +242,7 @@ function User(props) {
             ['主页','动态'].map((item, index) => {
               return (
                 <span 
-                  className={activeTag === index ? 'tag active' : 'tag'} 
+                  className={activeTag === index ? 'tag btn-to-deep active' : 'tag btn-to-deep'} 
                   onClick={() => setActiveTag(index)}
                   key={index}>
                   {item}
@@ -234,8 +250,6 @@ function User(props) {
               )
             })
           }
-          {/* <span className="tag active">主页</span>
-          <span className="tag">动态</span> */}
         </BgLayer>
         <AlbumListWrapper ref={songScrollWrapper}>
           <Scroll onScroll={handleScroll} ref={songScroll} >

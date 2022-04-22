@@ -29,18 +29,16 @@ export const Container = styled.div`
 export const TopDesc = styled.div`
   background-size: 100%;
   padding: 5px 20px;
-  padding-bottom: 50px;
-  margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   box-sizing: border-box;
   width: 100%;
-  height: 275px;
+  height: 225px;
   position: relative;
   .background {
     z-index: -1;
-    background: url(${props => props.background}) no-repeat;
+    background: rgba(0,0,0,.5);
     background-position: 0 0;
     background-size: 100% 100%;
     position: absolute;
@@ -60,27 +58,9 @@ export const TopDesc = styled.div`
   .img_wrapper {
     width: 120px;
     height: 120px;
-    position: relative;         
-    .decorate {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 35px;
-      border-radius: 3px;
-      background: linear-gradient(hsla(0,0%,43%,.4), hsla(0,0%,100%,0));
-    }
-    .play_count {
-      position: absolute;
-      right: 2px;
-      top: 2px;
-      font-size: ${globalStyle["font-size-s"]};
-      line-height: 15px;
-      color: ${globalStyle["font-color-light"]};
-      .play {
-        vertical-align: top;
-        font-size: ${globalStyle["font-size-s"]};
-      }
-    }
+    position: relative;
+    background: radial-gradient(circle, white 40%, grey);
+    border-radius: 20%;
     img {
       width: 120px;
       height: 120px;
@@ -95,59 +75,14 @@ export const TopDesc = styled.div`
     height: 120px;
     padding: 0 10px;
     .title {
-      /* max-height: 40px; */
       color: ${globalStyle["font-color-light"]};
       font-weight: 700;
       line-height: 20px;
       font-size: ${globalStyle["font-size-l"]};
-      /* ${globalStyle['doubleOmitted']()} */
-    }
-    .person {
-      display: flex;
-      .avatar {
-        width: 20px;
-        height: 20px;
-        margin-right: 5px;
-        img {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-        }
-      }
-      .name {
-        line-height: 20px;
-        font-size: ${globalStyle["font-size-m"]};
+      span {
+        font-size: ${globalStyle["font-size-s"]};
         color: ${globalStyle["font-color-desc-v2"]};
       }
     }
   }
 `
-
-export const Menu = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: space-evenly;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-  margin: -100px 70px 0 70px;
-  /* border: 1px solid ${globalStyle["font-color-light"]}; */
-  /* border-bottom: none; */
-  /* border-radius: 20px; */
-  >div {
-    display: flex;
-    flex-direction: column;
-    line-height: 20px;
-    text-align: center;
-    font-size: ${globalStyle["font-size-s"]};
-    color: ${globalStyle["font-color-light"]};
-    z-index:1000;
-    font-weight: 500;
-    width: 40px;
-    .iconfont {
-      font-size: 20px;
-    }
-  }
-  .btn-unable {
-    color: ${globalStyle['font-color-desc-v2']};
-  }
-`;

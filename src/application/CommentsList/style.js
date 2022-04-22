@@ -129,13 +129,13 @@ export const ContentArea = styled.div`
   bottom: 0;
   overflow: hidden;
   background-color: ${globalStyle['background-color']};
-  padding: 5px 16px 0;
+  padding: 5px 0 0;
 `
 
 export const CommentCard = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  padding: 10px 0 0;
+  padding: 10px 16px 0;
   position: relative;
   .left {
     width: 38px;
@@ -183,7 +183,7 @@ export const CommentCard = styled.div`
   .liked {
     position: absolute;
     top: 10px;
-    right: 0;
+    right: 16px;
     font-weight: normal;
     .liked-count {
       font-size: ${globalStyle['font-size-s']};

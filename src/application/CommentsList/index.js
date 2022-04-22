@@ -5,23 +5,25 @@ import {connect} from 'react-redux'
 import { 
   getFirstPageCommentsList, 
   loadMoreComments,
-  toggleShowCommentsList  
+  toggleShowCommentsList  ,
+  changeCommentsList
 } from './store/actionCreators'
-import {
-  changeFullScreen
-} from '../Player/store/actionCreators'
+import { changeFullScreen } from '../Player/store/actionCreators'
+import { operateChooseSinger } from '../../components/OperationsList/store/actionCreators'
 import Header from '../../baseUI/header'
 import Scroll from '../../baseUI/scroll'
 import dayjs from 'dayjs'
 import {withRouter} from 'react-router-dom'
 import {
   getSongDetailRequest,
-  getAlbumDetailRequest
+  getAlbumDetailRequest,
+  likeComment
 } from '../../api/request'
 import {getName} from '../../api/utils'
 import LazyLoad, {forceCheck} from 'react-lazyload'
 import Calendar from 'dayjs/plugin/calendar'
 import 'dayjs/locale/zh-cn'
+
 dayjs.extend(Calendar)
 dayjs.locale('zh-cn')
 
@@ -44,31 +46,24 @@ function CommentsList (props) {
     playing,
     type,
     id
-    // showCommentsList, 
-    // commentsList, 
-    // enterLoading, 
-    // pullUpLoading
   } = props
 
   const {
     getFirstCommentsDispatch,
     loadMoreCommentsDispatch,
     toggleShowCommentsDispatch,
-    toggleFullScreenDispatch
-    // toggleCommentsListDispatch, 
-    // updateCommentsList, 
-    // loadMoreCommentsList,
-    // toggleFullScreen
+    toggleFullScreenDispatch,
+    changeCommentsListLikeDispatch,
+    operateChooseSingerDispatch
   } = props
-
-  
-  // const [id, setId] = useState(0)
 
   const scrollRef = useRef()
   const [commentsInfo, setCommentsInfo] = useState({
     title: '',
     imgSrc: '',
-    author: ''
+    author: '',
+    artistsList: [],
+    type: 0 // 0-歌手 1-歌单创建者
   })
 
   useEffect(() => { // 初次进入评论页
@@ -76,7 +71,6 @@ function CommentsList (props) {
     let [urlId, type] = params.split('+')
     type = Number(type)
     toggleShowCommentsDispatch(true)
-    // handleGetInfo(urlId, type)
     getFirstCommentsDispatch(urlId, type, 99)
   }, [])
 
@@ -93,25 +87,29 @@ function CommentsList (props) {
             setCommentsInfo({
               title: res.songs[0].name,
               imgSrc: res.songs[0].al.picUrl,
-              author: getName(res.songs[0].ar)
+              author: getName(res.songs[0].ar),
+              artistsList: res.songs[0].ar,
+              type: 0
             })
           }
         })
         .catch(err => {})
         break
       case 2: // 歌单
-      getAlbumDetailRequest(id)
-      .then(res => {
-        if(res.code === 200) {
-          setCommentsInfo({
-            title: res.playlist.name,
-            imgSrc: res.playlist.coverImgUrl,
-            author: getName(res.playlist.creator.nickname)
-          })
-        }
-      })
-      default:
+        getAlbumDetailRequest(id)
+        .then(res => {
+          if(res.code === 200) {
+            setCommentsInfo({
+              title: res.playlist.name,
+              imgSrc: res.playlist.coverImgUrl,
+              author: getName(res.playlist.creator.nickname),
+              artistsList: [res.playlist.creator.userId],
+              type: 1
+            })
+          }
+        })
         break
+      default:
     }
   }
 
@@ -121,9 +119,37 @@ function CommentsList (props) {
   }
 
   const handleJump = (id) => {
-    // toggleFullScreen(false)
     toggleShowCommentsDispatch(false)
     props.history.push(`/user/${id}`)
+  }
+
+  const handleJumpToSingerPage = () => {
+    if(commentsInfo.artistsList.length === 1) {
+      if(commentsInfo.type === 0) {
+        props.history.push(`/singers/${commentsInfo.artistsList[0].id}`)
+      } else {
+        props.history.push(`/user/${commentsInfo.artistsList[0]}`)
+      }
+    } else {
+      console.log(commentsInfo.artistsList)
+      operateChooseSingerDispatch(commentsInfo.artistsList)
+    }
+    
+  }
+
+  const handleLikeComment = (cid, t) => {
+    likeComment(id, cid, t, type)
+    .then(res => {
+      if(res.code === 200) {
+        let newList = list.map(item => {
+          if(item.commentId === cid) {
+            return {...item, liked: t ? true : false, likedCount: item.likedCount + (t ? 1 : (-1))}
+          }
+          return {...item}
+        })
+        changeCommentsListLikeDispatch(newList)
+      }
+    })
   }
 
   const loadMoreCommentsList = () => {
@@ -151,11 +177,11 @@ function CommentsList (props) {
           title={`评论(${totalCount})`}
           isDark={true}
           />
-        <IntroBlock>
-          <img src={commentsInfo.imgSrc} alt="image" />
+        <IntroBlock className="btn-to-deep">
+          <img src={commentsInfo.imgSrc} alt="img" />
           <div className="comments-title">
             <h5>{commentsInfo.title}</h5>
-            <h6>{commentsInfo.author}</h6>
+            <h6 onClick={handleJumpToSingerPage}>{commentsInfo.author}</h6>
           </div>
         </IntroBlock>
         <TypeBar>
@@ -178,7 +204,6 @@ function CommentsList (props) {
             enterLoading={loading}
             pullUp={loadMoreCommentsList}
             onScroll={forceCheck}
-            // pullUpLoading={loading}
             ref={scrollRef}
           >
             <div>
@@ -186,15 +211,13 @@ function CommentsList (props) {
                 list && list.length>0 ?
                 list.map((item, index) => {
                   return (
-                    <CommentCard key={item.commentId+index}>
+                    <CommentCard className="btn-to-deep" key={item.commentId+index}>
                       <div className="left">
                         <div className="img_wrapper">
                           <LazyLoad overflow placeholder={<img src={require('./defaultAvatar.jpg')} height="100%" width="100%" alt="avatar" />}>
-                            <img src={item.user.avatarUrl} width="100%" height="100%" onClick={() => handleJump(item.user.userId)} />
+                            <img src={item.user.avatarUrl} width="100%" height="100%" onClick={() => handleJump(item.user.userId)} alt="avatar"/>
                           </LazyLoad>
                         </div>
-                        
-                        
                       </div>
                       <div className="right">
                         <p className="nickname">{item.user.nickname}</p>
@@ -205,8 +228,8 @@ function CommentsList (props) {
                         <span className="liked-count">{item.likedCount > 0 ? item.likedCount : ''}  </span>
                         {
                           item.liked ? 
-                          <span className="iconfont like">&#xe8c4;</span> : 
-                          <span className="iconfont">&#xe8ad;</span>
+                          <span className="iconfont like" onClick={() => handleLikeComment(item.commentId, 0)}>&#xe8c4;</span> : 
+                          <span className="iconfont" onClick={() => handleLikeComment(item.commentId, 1)}>&#xe8ad;</span>
                         }
                       </div>
                     </CommentCard>
@@ -241,6 +264,12 @@ const mapDispatchToProps = dispatch => ({
   },
   toggleFullScreenDispatch(data) {
     dispatch(changeFullScreen(data))
+  },
+  changeCommentsListLikeDispatch(data) {
+    dispatch(changeCommentsList(data))
+  },
+  operateChooseSingerDispatch(data) {
+    dispatch(operateChooseSinger(data))
   }
 })
 

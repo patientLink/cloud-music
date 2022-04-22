@@ -9,7 +9,7 @@ import {reducer as searchReducer} from '../application/Search/store'
 import {reducer as userReducer} from '../application/Login/store'
 import {reducer as commentsReducer} from '../application/CommentsList/store'
 import {reducer as followReducer} from '../application/Follow/store'
-
+import {reducer as operationReducer} from '../components/OperationsList/store'
 
 export default combineReducers({
   recommend: recommendReducer,
@@ -21,5 +21,6 @@ export default combineReducers({
   search: searchReducer,
   user: userReducer,
   comments: commentsReducer,
-  follow: followReducer
+  follow: followReducer,
+  operation: operationReducer
 })

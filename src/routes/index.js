@@ -11,8 +11,10 @@ const LoginComponent = lazy(() => import  ('../application/Login'))
 const UserComponent = lazy(() => import ('../application/User'))
 const CommentsComponent = lazy(() => import ('../application/CommentsList'))
 const FollowComponent = lazy(() => import ('../application/Follow'))
+const DailyRecommendComponent = lazy(() => import ('../application/DailyRecommend'))
 
 const SuspenseComponent = Component => props => {
+  window._history = window._history || props.history
   return (
     <Suspense fallback={null}>
       <Component {...props}></Component>
@@ -76,6 +78,12 @@ export default [
         exact: true,
         key: "album",
         component: SuspenseComponent(AlbumComponent)
+      },
+      {
+        path: "/dailyrecommend",
+        exact: true,
+        key: "dailyrecommend",
+        component: SuspenseComponent(DailyRecommendComponent)
       },
       {
         path: "/user/:id",

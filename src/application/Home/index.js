@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import {renderRoutes} from 'react-router-config'
 import {
   Top, 
@@ -11,6 +11,34 @@ import Player from '../Player'
 import Sidebar from '../Sidebar'
 import {connect} from 'react-redux'
 import {getLoginStatus, getUserMore, clearUser} from '../Login/store/actionCreators'
+import OperaionsList from '../../components/OperationsList'
+
+const handleAddClassName = (ele) => {
+  if(ele.classList.contains('btn-to-deep')) {
+    ele.classList.add('btn-to-deep-mouseOn')
+  } else {
+    if(ele.parentElement) {
+      handleAddClassName(ele.parentElement)
+    }
+  }
+}
+const handleRemoveClassName = (ele) => {
+  if(ele.classList.contains('btn-to-deep') && ele.classList.contains('btn-to-deep-mouseOn')) {
+    ele.classList.remove('btn-to-deep-mouseOn')
+  } else {
+    if(ele.parentElement) {
+      handleRemoveClassName(ele.parentElement)
+    }
+  }
+}
+
+// 全局事件 按下按钮后背景色加深
+const changeTouchingButtonBgColor = (e) => {
+  handleAddClassName(e.target)
+}
+const changeTouchingButtonBgColorOut = (e) => {
+  handleRemoveClassName(e.target)
+}
 
 function Home(props) {
   const {
@@ -21,7 +49,7 @@ function Home(props) {
     userSubCount,
     userLevel,
     userLikelist,
-    userPlaylist
+    userPlaylist,
   } = props
   // console.log(props)
   const {
@@ -32,41 +60,34 @@ function Home(props) {
 
   const [showSidebar, setShowSidebar] = useState(false)
 
+  useEffect(() => {
+    document.addEventListener('touchstart', changeTouchingButtonBgColor)
+    document.addEventListener('touchend', changeTouchingButtonBgColorOut)
+    return () => {
+      document.removeEventListener('touchstart', changeTouchingButtonBgColor)
+      document.removeEventListener('touchend', changeTouchingButtonBgColorOut)
+    }
+  }, [])
+
   // 每次组件创建挂载时判断一下登录状态
   useEffect(() => {
     getStatus()
-  }, [])
+  }, [getStatus])
 
   // 用户id更改时获取其信息
   useEffect(() => {
-    console.log('change')
     if(userId) {
       getDetail(userId)
     }
-  }, [userId])
+  }, [userId, getDetail])
 
   const handleHideSidebar = () => {
     setShowSidebar(false)
   }
 
-  const jumpToLogin = () => {
+  const handleJump = (url) => {
     setShowSidebar(false)
-    props.history.push('/login')
-  }
-
-  const jumpToUser = () => {
-    setShowSidebar(false)
-    props.history.push(`/user/${userId}`)
-  }
-
-  const jumpToFollow = () => {
-    setShowSidebar(false)
-    props.history.push(`/follow/${userId}`)
-  }
-
-  const jumpToFollowed = () => {
-    setShowSidebar(false)
-    props.history.push(`/followed/${userId}`)
+    props.history.push(url)
   }
 
   const handleLogout = () => {
@@ -75,42 +96,39 @@ function Home(props) {
     props.history.push('/login')
   }
 
-  const jumpToAlbum = (id) => {
-    props.history.push(`/album/${id}`)
-    setShowSidebar(false)
-  }
 
   return (
     <Layout>
       <Top>
-        <span className="iconfont menu" onClick={() => {setShowSidebar(true)}}>&#xe627;</span>
+        <span className="iconfont menu btn-to-deep" onClick={() => {setShowSidebar(true)}}>&#xe627;</span>
         <span className="title">网易云音乐</span>
-        <span className="iconfont search" onClick={() => props.history.push('/search')}>&#xe603;</span>
+        <span className="iconfont search btn-to-deep" onClick={() => props.history.push('/search')}>&#xe603;</span>
       </Top>
       <Tab>
-        <NavLink to="/recommend" activeClassName="selected"><TabItem><span>推荐</span></TabItem></NavLink>
-        <NavLink to="/singers" activeClassName="selected"><TabItem><span>歌手</span></TabItem></NavLink>
-        <NavLink to="/rank" activeClassName="selected"><TabItem><span>排行榜</span></TabItem></NavLink>
+        <NavLink to="/recommend" className={"btn-to-deep"} activeClassName="selected"><TabItem><span>推荐</span></TabItem></NavLink>
+        <NavLink to="/singers" className={"btn-to-deep"} activeClassName="selected"><TabItem><span>歌手</span></TabItem></NavLink>
+        <NavLink to="/rank" className={"btn-to-deep"} activeClassName="selected"><TabItem><span>排行榜</span></TabItem></NavLink>
       </Tab>
       {renderRoutes(route.routes)}
       <Player history={props.history}></Player>
       <Sidebar 
         show={showSidebar} 
         isLogin={isLogin}
+        history={props.history}
+        id={userId}
         handleHide={handleHideSidebar}
-        handleLogin={jumpToLogin}
+        handleJump={handleJump}
         handleLogout={handleLogout}
-        jumpToAlbum={jumpToAlbum}
-        jumpToUser={jumpToUser}
-        jumpToFollow={jumpToFollow}
-        jumpToFollowed={jumpToFollowed}
         userDetail={userDetail}
         userSubCount={userSubCount}
         userLevel={userLevel}
         userLikeCount={userLikelist.length}
         userPlaylist={userPlaylist}
         ></Sidebar>
-      
+      <OperaionsList 
+        handleJump={handleJump}
+        history={props.history}
+      />
     </Layout>
     
   )

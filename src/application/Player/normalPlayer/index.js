@@ -29,7 +29,8 @@ function NormalPlayer(props) {
     duration, 
     percent, 
     mode,
-    totalCount
+    totalCount,
+    isPersonalFm
   } = props
   const {
     toggleFullScreen, 
@@ -44,7 +45,9 @@ function NormalPlayer(props) {
     currentLyric,
     currentPlayingLyric,
     currentLineNum,
-    likeMusic
+    likeMusic,
+    collectMusic,
+    handleJumpToSingerPage
   } = props
 
   const normalPlayerRef = useRef()
@@ -114,7 +117,6 @@ function NormalPlayer(props) {
   }
 
   const afterEnter = () => {
-    const cdWrapperDom = cdWrapperRef.current
     animations.unregisterAnimation('move')
     cdWrapperRef.current.style.animation = ""
   }
@@ -177,7 +179,7 @@ function NormalPlayer(props) {
       <NormalPlayerContainer ref={normalPlayerRef}>
         <div className="background">
           <img
-            src={song.al.picUrl + "?param=300x300"}
+            src={isPersonalFm ? song.album.picUrl + "?param=300x300" : song.al.picUrl + "?param=300x300"}
             width="100%"
             height="100%"
             alt="歌曲图片"
@@ -194,6 +196,7 @@ function NormalPlayer(props) {
             fontSize="l"
             color="main"
             txt={song.name}
+            active={fullScreen}
           />
           {/* <h1 className="title">{song.name}</h1> */}
           <Marquee
@@ -201,7 +204,9 @@ function NormalPlayer(props) {
             lineHeight="20px"
             fontSize="m"
             color="sub"
-            txt={getName (song.ar)}
+            txt={isPersonalFm ?getName(song.artists) : getName(song.ar)}
+            active={fullScreen}
+            onClick={handleJumpToSingerPage}
           />
           {/* <h1 className="subtitle">{}</h1> */}
         </Top>
@@ -221,7 +226,7 @@ function NormalPlayer(props) {
               <div className="cd">
                 <img
                   className={`image play ${playing ? "" : "pause"}`}
-                  src={song.al.picUrl + "?param=400x400"}
+                  src={isPersonalFm ? song.album.picUrl + "?param=400x400" : song.al.picUrl + "?param=400x400"}
                   alt=""
                 />
               </div>
@@ -266,26 +271,28 @@ function NormalPlayer(props) {
           <MoreOperators 
             style={{visibility: currentState === "lyric" ? "hidden" : "visible"}}
             >
-            <div className="icon i-left" onClick={()=>{handleLikeMusic()}}>
-              {
-                isFavorite ? 
-                <i className="iconfont i-favorite">&#xe8c3;</i> 
-                : 
-                <i className="iconfont">&#xe8ab;</i>
-              }
-            </div>
-            
+            {
+              isPersonalFm ? 
+              <div className="icon i-left"></div> :
+              <div className="icon i-left" onClick={handleLikeMusic}>
+                {
+                  isFavorite ? 
+                  <i className="iconfont i-favorite">&#xe8c3;</i> 
+                  : 
+                  <i className="iconfont">&#xe8ab;</i>
+                }
+              </div>
+            }
             <div className="icon i-center">
               <i className="iconfont" onClick={() => {
                 if(totalCount > 0) {
-                  // getCommentsCount(song.id)
                   toggleCommentsList(true)
                 }
                 }}>&#xe607;</i>
               <span className="commentCount">{getCountv2(totalCount)}</span>
             </div>
             <div className="icon i-right">
-              <i className="iconfont">&#xe606;</i>
+              <i className="iconfont" onClick={() => collectMusic(song.id)}>&#xe606;</i>
             </div>
           </MoreOperators>
           <ProgressWrapper>
@@ -299,14 +306,28 @@ function NormalPlayer(props) {
             <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
-            <div className="icon i-left" onClick={changeMode}>
-              <i 
-                className="iconfont"
-                dangerouslySetInnerHTML={{__html: getPlayMode()}}
+            <div className="icon i-left" onClick={isPersonalFm ? handleLikeMusic : changeMode}>
+              {
+                isPersonalFm ? 
+                (
+                  isFavorite ? 
+                  <i className="iconfont i-favorite">&#xe8c3;</i> 
+                  : 
+                  <i className="iconfont">&#xe8ab;</i>
+                ) 
+                :
+                <i 
+                  className="iconfont"
+                  dangerouslySetInnerHTML={{__html: getPlayMode()}}
                 ></i>
+              }
             </div>
             <div className="icon i-left">
-              <i className="iconfont" onClick={handlePrev}>&#xe6d4;</i>
+              {
+                !isPersonalFm ? 
+                <i className="iconfont" onClick={handlePrev}>&#xe6d4;</i> :
+                null
+              }
             </div>
             <div className="icon i-center">
               <i 

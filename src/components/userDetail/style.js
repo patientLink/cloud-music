@@ -8,21 +8,23 @@ export const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 15px;
+  padding: 0;
   background-color: #fff;
 
   .content-list {
     width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-bottom: 20px;
+    padding: 15px 0 20px;
     .item {
-      margin-bottom: 8px;
+      padding: 4px 15px;
       display: flex;
       flex-flow: row nowrap;
       align-items: center;
+      box-sizing: border-box;
       width: 100%;
       .icon {
         width: 40px;
@@ -72,8 +74,8 @@ export const Block = styled.div`
 
   .title {
     font-size: ${globalStyle['font-size-l']};
-    line-height: ${globalStyle['font-size-l']};
-    margin-bottom: 12px;
+    line-height: 30px;
+    padding: 0 15px;
     font-weight: 550;
 
     .sub-title {

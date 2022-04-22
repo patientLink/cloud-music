@@ -5,8 +5,8 @@ import PropTypes from 'prop-types'
 
 const HeaderContainer = styled.div`
   position: fixed;
-  padding: 5px 10px;
-  padding-top: 0;
+  /* padding: 5px 10px;
+  padding-top: 0; */
   height: 40px;
   width: 100%;
   z-index: 10001;
@@ -14,9 +14,10 @@ const HeaderContainer = styled.div`
   line-height: 40px;
   color: ${(props) => props.isDark ? globalStyle["font-color-dark"] : globalStyle["font-color-light"] };
   .back {
-    margin-right: 5px;
     font-size: 20px;
-    width: 20px;
+    width: 40px;
+    text-align: center;
+    margin-right: 5px;
   }
   >h1 {
     font-size: ${globalStyle["font-size-l"]};
@@ -41,6 +42,7 @@ const Marquee = styled.div`
   overflow: hidden;
   white-space: nowrap;
   position: relative;
+  box-sizing: border-box;
   .inner-text {
     /* left: 100%; */
     position: absolute;
@@ -56,7 +58,7 @@ const Header = React.forwardRef((props, ref) => {
   const {handleClick, title, isMarquee, isDark} = props
   return (
     <HeaderContainer ref={ref} isDark={isDark}>
-      <i className="iconfont back" onClick={handleClick}>&#xe61f;</i>
+      <i className="iconfont back btn-to-deep" onClick={handleClick}>&#xe61f;</i>
       {
         isMarquee ? <Marquee><div className="inner-text"><h1>{title}</h1></div></Marquee> : <h1>{title}</h1>
       }

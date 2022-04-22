@@ -6,21 +6,17 @@ import {
   changePlayMode, 
   changePlayList ,
   deleteSong,
-  changeSequencePlayList,
-  changeCurrentSong,
-  changePlayingState,
-  changeFullScreen
+  resetPlayer
 } from '../store/actionCreators'
 import { PlayListWrapper, ScrollWrapper, ListHeader, ListContent } from './style'
 import {prefixStyle, getName, shuffle, findIndex, getValueOfTransform} from '../../../api/utils'
-import {playMode} from '../../../api/config'
+import {playMode, listBoxTouchMoveDistance} from '../../../api/config'
 import Scroll from '../../../baseUI/scroll'
 import { CSSTransition } from 'react-transition-group'
 import Confirm from './../../../baseUI/confirm'
 
 
 function PlayList (props) {
-
   const {
     showPlayList,
     currentIndex,
@@ -28,9 +24,8 @@ function PlayList (props) {
     playList,
     mode,
     sequencePlayList,
-    userLikelist
+    isPersonalFm
   } = props
-
   const {
     togglePlayListDispatch,
     changeCurrentIndexDispatch,
@@ -40,7 +35,6 @@ function PlayList (props) {
     clearDispatch,
     handlePreSongClear
   } = props
-
   const transform = prefixStyle("transform")
 
   const playListRef = useRef()
@@ -50,14 +44,11 @@ function PlayList (props) {
   const contentRef = useRef()
 
   const [isShow, setIsShow] = useState(false)
-  // const [canTouch, setCanTouch] = useState(true)
   const canTouch = useRef(false)
 
   const [startY, setStartY] = useState(0)
   const [initiated, setInitiated] = useState(false)
-  // const [distance, setDistance] = useState(0)
   const distanceRef = useRef(0)
-  const scrollInnerDistance = useRef(0)
   const clickToggle = useRef(true)
 
   const onEnterCB = useCallback(() => {
@@ -80,12 +71,6 @@ function PlayList (props) {
     listWrapperRef.current.style[transform] = `translate3d(0, 100%, 0)`
   }, [transform])
 
-  const checkIfFavorit = id => {
-    let res = userLikelist.findIndex(item => item === id) > -1
-    console.log(res)
-    return res
-    // return userLikelist.findIndex(item => item === id) > -1
-  }
 
   const getCurrentIcon = item => {
     const current = currentSong.id === item.id
@@ -153,12 +138,14 @@ function PlayList (props) {
         index = findIndex(currentSong, newList)
         changePlayListDispatch(newList)
         changeCurrentIndexDispatch(index)
+        break
+      default:
     }
     changeModeDispatch(newMode)
   }
 
   const handleTouchStart = e => {
-    if(!canTouch.current && initiated) return
+    if(isPersonalFm || (!canTouch.current && initiated)) return
 
     let str = contentRef.current.style[transform]
     let y = getValueOfTransform(str, 'y') || 0
@@ -168,7 +155,7 @@ function PlayList (props) {
     setInitiated(true)
   }
   const handleTouchMove = e => {
-    if(!canTouch.current || !initiated) return
+    if(isPersonalFm || !canTouch.current || !initiated) return
     
     let distance = e.nativeEvent.touches[0].pageY - startY
     clickToggle.current = false
@@ -184,13 +171,14 @@ function PlayList (props) {
     listWrapperRef.current.style[transform] = `translate3d(0, ${distance}px, 0)`
   }
   const handleTouchEnd = e => {
+    if(isPersonalFm) return
     setInitiated(false)
 
     setTimeout(() => {
       clickToggle.current = true
     });
     listContentRef.current.enable()
-    if(distanceRef.current >= 150) {
+    if(distanceRef.current >= listBoxTouchMoveDistance[0]) {
       togglePlayListDispatch(false)
       distanceRef.current = 0
     } else {
@@ -208,6 +196,7 @@ function PlayList (props) {
     <CSSTransition
       in={showPlayList}
       timeout={300}
+      mountOnEnter
       classNames="list-fade"
       onEnter={onEnterCB}
       onEntering={onEnteringCB}
@@ -230,41 +219,48 @@ function PlayList (props) {
           onTouchEnd={handleTouchEnd}
           >
           <ListHeader>
-            <h1 className="title">
-              {getPlayMode()}
-              <span className="iconfont clear" onClick={handleShowClear}>&#xe617;</span>
-            </h1>
+            {
+              !isPersonalFm ? 
+              <h1 className="title">
+                {getPlayMode()}
+                <span className="iconfont clear btn-to-deep" onClick={handleShowClear}>&#xe617;</span>
+              </h1> : null
+            }
           </ListHeader>
           <ScrollWrapper>
-            <Scroll 
-              ref={listContentRef}  
-              onScroll={pos => handleScroll(pos)}
-              bounceTop={false}
-              bounceBottom={false}
-            >
-            <ListContent ref={contentRef}>
-              {
-                playList.map((item, index) => {
-                  return (
-                    <li className="item" key={item.id} onClick={() => handleChangeCurrentIndex(index)}>
-                      {getCurrentIcon (item)}
-                      <span className="text">{item.name} - {getName(item.ar)}</span>
-                      {/* <span className="like" onClick={e => e.stopPropagation()}>
-                        {
-                          // checkIfFavorit(item.id) ? 
-                          // <i className="iconfont i-favorite">&#xe8c3;</i>:
-                          <i className="iconfont">&#xe8ab;</i>
-                        }
-                      </span> */}
-                      <span className="delete" onClick={e => handleDeleteSong(e, item)}>
-                        <i className="iconfont">&#xe61a;</i>
-                      </span>
-                    </li>
-                  )
-                })
-              }
-            </ListContent>
-            </Scroll>
+            {
+              !isPersonalFm ? 
+              <Scroll 
+                ref={listContentRef}  
+                onScroll={pos => handleScroll(pos)}
+                bounceTop={false}
+                bounceBottom={false}
+              >
+                <ListContent ref={contentRef}>
+                  {
+                    playList.map((item, index) => {
+                      return (
+                        <li className="item btn-to-deep" key={item.id} onClick={() => handleChangeCurrentIndex(index)}>
+                          {getCurrentIcon (item)}
+                          <span className="text">{item.name} - {getName(item.ar)}</span>
+                          <span className="delete btn-to-deep" onClick={e => handleDeleteSong(e, item)}>
+                            <i className="iconfont">&#xe61a;</i>
+                          </span>
+                        </li>
+                      )
+                    })
+                  }
+                </ListContent>
+              </Scroll> : 
+              <div className="personal-fm-wrapper">
+                <p className="personal-fm-title">当前播放: 私人FM</p>
+                <p className="personal-fm-detail">
+                  <span className="personal-fm-song-name">{currentSong.name} </span>
+                  - 
+                  <span className="personal-fm-song-artist"> {getName(currentSong.artists)}</span>
+                </p>
+              </div>
+            }
           </ScrollWrapper>
         </div>
         <Confirm 
@@ -302,13 +298,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deleteSong(data))
   },
   clearDispatch() {
-    dispatch(changePlayList([]))
-    dispatch(changeSequencePlayList([]))
-    dispatch(changeCurrentIndex(-1))
-    dispatch(changeShowPlayList(false))
-    dispatch(changeCurrentSong({}))
-    dispatch(changePlayingState(false))
-    dispatch(changeFullScreen(false))
+    dispatch(resetPlayer())
   }
 })
 

@@ -5,7 +5,7 @@ import {MiniPlayerContainer} from './style'
 import ProgressCircle from '../../../baseUI/progress-circle'
 
 function MiniPlayer(props) {
-  const {song, fullScreen, playing, percent, history} = props
+  const {song, fullScreen, playing, percent, isPersonalFm} = props
   const {toggleFullScreen, clickPlaying, togglePlayList} = props
   const miniPlayerRef = useRef()
 
@@ -27,24 +27,19 @@ function MiniPlayer(props) {
       }}
     >
       <MiniPlayerContainer ref={miniPlayerRef} onClick={() => {
-          // if(history.location.pathname.startsWith('/user')) {
-          //   toggleCommentsList(false)
-          // }
           toggleFullScreen(true)
         }}>
         <div className="icon">
           <div className="imgWrapper">
             <img 
               className={`play ${playing ? "" : "pause"}`} 
-              src={song.al.picUrl} 
-              // width="40" 
-              // height="40" 
+              src={isPersonalFm ? song.album.picUrl : song.al.picUrl} 
               alt="img" />
           </div>
         </div>
         <div className="text">
           <h2 className="name">{song.name}</h2>
-          <p className="desc">{getName(song.ar)}</p>
+          <p className="desc">{isPersonalFm ? getName(song.artists) : getName(song.ar)}</p>
         </div>
         <div className="control">
           <ProgressCircle radius={32} percent={percent}>

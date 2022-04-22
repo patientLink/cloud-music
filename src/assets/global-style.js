@@ -32,7 +32,9 @@ const doubleOmitted = () => {
 export default {
   'theme-color': '#8193e8',
   'theme-color-shadow': 'rgba(129,147,232,.5)',
+  'light-green-color': 'rgba(122,209,148)',
   'warning-color': '#ff0000',
+  'warning-border-color': "#e19393",
   'font-color-dark': '#000',
   'font-color-light': '#f1f1f1',
   'font-color-desc': '#2E3030',

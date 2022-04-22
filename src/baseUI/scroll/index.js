@@ -1,4 +1,4 @@
-import React, {useMemo, forwardRef, useEffect, useState, useRef, useImperativeHandle, useCallback} from 'react'
+import React, {forwardRef, useEffect, useState, useRef, useImperativeHandle, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import BScroll from 'better-scroll'
 import styled from 'styled-px2vw'
@@ -11,10 +11,6 @@ const ScrollContainer = styled.div`
   height: 100%;
   overflow: hidden;
   position: relative;
-  /* .scroll-inner-container {
-    width: 100%;
-    position: absolute;
-  } */
 `
 
 const PullUpLoading = styled.div`

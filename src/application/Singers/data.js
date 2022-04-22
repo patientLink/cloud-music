@@ -17,6 +17,8 @@ const reducer = (state, action) => {
       return produce(state, draftState => {
         draftState['alpha'] = action.data
       })
+    default:
+      break
   }
 }
 

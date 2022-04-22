@@ -46,9 +46,17 @@ export const ListWrapper = styled.div`
       width: 48px;
       height: 48px;
       margin-right: 8px;
+      position: relative;
 
       img {
         border-radius: 50%;
+      }
+      .img-detail-icon {
+        width: 35%;
+        height: 35%;
+        position: absolute;
+        right: 0;
+        bottom: 0;
       }
     }
 

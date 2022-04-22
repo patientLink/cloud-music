@@ -8,11 +8,13 @@ export const SongList = styled.div`
   ${props => props.showBackground ? `background: ${globalStyle["highlight-background-color"]};`: ""}
   .first_line {
     box-sizing: border-box;
-    padding: 10px 0;
-    margin-left: 10px;
+    padding: 10px 0 10px 10px;
     position: relative;
     justify-content: space-between;
     border-bottom: 1px solid ${globalStyle["border-color"]};
+    &::after {
+      border-radius: 10px 10px 0 0;
+    }
     .play_all {
       display: inline-block;
       line-height: 24px;
@@ -64,8 +66,7 @@ export const SongItem = styled.ul`
   >li {
     display: flex;
     height: 60px;
-    align-items: center;  
-    padding-right: 20px;
+    align-items: center;
     .index {
       flex-basis: 60px;
       width: 60px;
@@ -81,24 +82,50 @@ export const SongItem = styled.ul`
       display: flex;
       height: 100%;
       padding: 5px 0;
+      position: relative;
       flex-direction: column;
       justify-content: space-around;
       border-bottom: 1px solid ${globalStyle["border-color"]};
       overflow: hidden;
       >span {
         ${globalStyle.noWrap ()}
+        max-width: 70%;
       }
-      >span:first-child {
+      .info_name {
         font-size: ${globalStyle["font-size-l"]};
         line-height: 22px;
         color: ${globalStyle["font-color-desc"]};
-        ${globalStyle.noWrap ()}
       }
-      >span:last-child {
+      .info_detail {
         font-size: ${globalStyle["font-size-s"]};
         color: ${globalStyle['font-color-desc-v2']};
-        ${globalStyle.noWrap ()}
         line-height: 20px;
+        
+      }
+      .info_opt {
+        position: absolute;
+        height: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        right: 0;
+        top: 0;
+        .iconfont-btn {
+          height: 100%;
+          line-height: 60px;
+          width: 40px;
+          text-align: center;
+          font-size: ${globalStyle["font-size-ll"]};
+          color: ${globalStyle["font-color-desc-v3"]};
+        }
+      }
+      .tips {
+        color: ${globalStyle["warning-color"]};
+        font-size: ${globalStyle["font-size-ss"]};
+        padding: 0 2px;
+        margin-right: 3px;
+        border: 1px solid ${globalStyle["warning-border-color"]};
+        border-radius: 20%;
       }
     }
   }

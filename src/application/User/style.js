@@ -83,16 +83,39 @@ export const InfoContent = styled.div`
       margin-bottom: 8px;
       font-weight: 450;
     }
+    .detail {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: start;
+      align-items: center;
+    }
+    .detailIcon {
+      width: ${globalStyle['font-size-ll']};
+      height: ${globalStyle['font-size-ll']};
+      z-index: 10;
+    }
+    .detailInfo {
+      font-weight: 300;
+      font-size: ${globalStyle['font-size-s']};
+      line-height: ${globalStyle['font-size-ll']};
+      letter-spacing: 1px;
+      padding: 0 5px 0 8px;
+      border-radius: 0 9px 9px 0;
+      background-color: #dd5b5b;
+      color: rgb(255,255,255);
+      transform: translateX(-6px);
+    }
     .follow {
       margin-bottom: 8px;
       span {
         font-weight: 300;
         font-size: ${globalStyle['font-size-s']};
+        letter-spacing: 1px;
+      }
+      .followInfo {
         border-left: 1px solid rgba(256,256,256,.7);
         padding-left: 13px ;
         padding-right: 10px;
-        letter-spacing: 1px;
-
         &:first-of-type {
           border-left: none;
           padding-left: 0;
@@ -105,6 +128,24 @@ export const InfoContent = styled.div`
       justify-content: flex-start;
       align-items: center;
       margin-bottom: 5px;
+    }
+    .artistPage_btn {
+      width: 80px;
+      height: 22px;
+      border: none;
+      position: absolute;
+      justify-content: space-evenly;
+      align-items: center;
+      display: flex;
+      padding: 0;
+      margin: 0;
+      right: 10px;
+      bottom: 66px;
+      background-color: rgba(256,256,256,.7);
+      color: #000;
+      font-size: ${globalStyle['font-size-m']};
+      border-radius: 11px;
+      border: 2px solid silver;
     }
     .follow_btn {
       position: absolute;
@@ -212,6 +253,8 @@ export const BgLayer = styled.div`
   z-index: 110;
 
   .tag {
+    width: 50%;
+    text-align: center;
     height: 30px;
     box-sizing: border-box;
     flex: 0 1 auto;

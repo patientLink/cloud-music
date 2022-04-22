@@ -5,15 +5,18 @@ export const Top = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  padding: 5px 10px;
   background: ${style["theme-color"]};
   &>span {
-    line-height: 40px;
+    line-height: 50px;
     color: ${style["font-color-light"]};
     font-size: 20px;
     &.iconfont {
       font-size: 22px;
     }
+  }
+  .menu, .search {
+    width: 42px;
+    text-align: center;
   }
 `
 

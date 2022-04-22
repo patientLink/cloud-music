@@ -110,6 +110,11 @@ function Follow(props) {
                     <div className="img-wrapper">
                       <LazyLoad overflow placeholder={<img src={require('./defaultAvatar.jpg')} width="100%" height="100%" alt="avatar" />} >
                         <img src={item.avatarUrl} width="100%" height="100%" alt="avatar" />
+                        {
+                          item.avatarDetail ? 
+                          <img className="img-detail-icon" src={item.avatarDetail.identityIconUrl} alt="" />
+                          : null
+                        }
                       </LazyLoad>
                     </div>
                     

@@ -30,7 +30,7 @@ export const PlayListWrapper = styled.div `
     bottom: 0;
     width: 100%;
     opacity: 1;
-    border-radius: 10px 10px 0 0;
+    border-radius: 25px 25px 0 0;
     background-color: ${globalStyle["highlight-background-color"]};
     transform: translate3d(0, 0, 0);
     .list_close {
@@ -47,6 +47,27 @@ export const ScrollWrapper = styled.div`
   overflow: hidden;
   @media screen and (min-aspect-ratio: 376 / 667) and (max-aspect-ratio: 768 / 1024) {
     height: 200px;
+  }
+
+  .personal-fm-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    .personal-fm-title {
+      font-size: ${globalStyle["font-size-ll"]};
+      text-align: center;
+    }
+    .personal-fm-detail {
+      color: ${globalStyle["warning-color"]};
+      font-size: ${globalStyle["font-size-l"]};
+      text-align: center;
+      .personal-fm-song-artist {
+        font-size: ${globalStyle["font-size-m"]};
+      }
+    }
   }
 `
 
@@ -72,6 +93,11 @@ export const ListHeader = styled.div `
     .clear {
       ${globalStyle.extendClick()}
       font-size: ${globalStyle["font-size-l"]};
+      &::after {
+        width: 200%;
+        height: 200%;
+        transform: translate(-25%, -25%);
+      }
     }
   }
 `
@@ -118,7 +144,11 @@ export const ListContent = styled.div `
         font-size: ${globalStyle["font-size-m"]};
         color: ${globalStyle["theme-color"]};
       }
-      
+      &::after {
+        width: 200%;
+        height: 200%;
+        transform: translate(-25%, -25%);
+      }
     }
   }
 `

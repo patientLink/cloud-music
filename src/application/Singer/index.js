@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react'
+import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react'
 import {CSSTransition} from 'react-transition-group'
 import {Container, ImgWrapper, CollectButton, SongListWrapper, BgLayer} from './style'
 import Header from '../../baseUI/header'
@@ -7,14 +7,21 @@ import SongsList from '../SongsList'
 import {HEADER_HEIGHT} from './../../api/config'
 import {connect} from 'react-redux'
 import {getSingerInfo, changeEnterLoading} from './store/actionCreators'
+import {collectArtistAndRefresh} from '../Login/store/actionCreators'
 import MusicNote from '../../baseUI/music-note'
 
 function Singer(props) {
   const [showStatus, setShowStatus] = useState(true)
 
-  const {artist, songsOfArtist: songs, loading, songsCount} = props
+  const {
+    artist,
+    songsOfArtist: songs,
+    loading,
+    songsCount,
+    userSublist
+  } = props
 
-  const {getSingerDataDispatch} = props
+  const {getSingerDataDispatch, collectArtistDispatch} = props
 
   const collectButton = useRef()
   const imageWrapper = useRef()
@@ -28,11 +35,15 @@ function Singer(props) {
   const initialHeight = useRef(0)
   const OFFSET = 5
 
+  const id = props.match.params.id
+
   useEffect(() => {
-    const id = props.match.params.id
+    // const id = props.match.params.id
+    setShowStatus(true)
     getSingerDataDispatch(id)
     clientWidthRatio.current = document.documentElement.clientWidth / 375
-  }, [])
+    songScroll.current && songScroll.current.refresh()
+  }, [id])
 
   useEffect(() => {
     let h = imageWrapper.current.offsetHeight
@@ -40,14 +51,15 @@ function Singer(props) {
     initialHeight.current = h
     layer.current.style.top = `${h - OFFSET}px`
     songScroll.current.refresh()
-
   }, [])
+
+  const collected = useMemo(() => userSublist.map(item => item.id).find(item => item === artist.id), [userSublist, artist])
 
   const musicAnimation = (x, y) => {
     musicNoteRef.current.startAnimation({x, y})
   }
 
-  const setShowStatusFalse = useCallback(() => {
+  const handleGoBack = useCallback(() => {
     setShowStatus(false)
   }, [])
 
@@ -91,26 +103,40 @@ function Singer(props) {
       timeout={400}
       classNames="fly"
       appear={true}
-      unmountOnExit
-      onExited={() => props.history.goBack ()}
+      onExited={props.history.goBack}
     >
       <Container play={songsCount}>
         <Header 
-          handleClick={setShowStatusFalse}
+          handleClick={handleGoBack}
           title={artist.name}
           ref={header}
         ></Header>
         <ImgWrapper ref={imageWrapper} bgUrl={artist.picUrl}>
           <div className="filter"></div>
         </ImgWrapper>
-        <CollectButton ref={collectButton}>
-          <i className="iconfont">&#xe61b;</i>
-          <span className="text"> 收藏 </span>
+        <CollectButton ref={collectButton} onClick={() => {collectArtistDispatch(collected ? 2 : 1, artist.id)}}>
+          {
+            collected ? 
+            <>
+              <i className="iconfont">&#xe8c3;</i>
+              <span className="text"> 已收藏 </span>
+            </>
+             : 
+            <>
+              <i className="iconfont">&#xe61b;</i>
+              <span className="text"> 收藏 </span>
+            </>
+          }
         </CollectButton>
         <BgLayer ref={layer}></BgLayer>
         <SongListWrapper ref={songScrollWrapper}>
           <Scroll onScroll={handleScroll} ref={songScroll} enterLoading={loading}>
-            <SongsList songs={songs} showCollect={false} musicAnimation={musicAnimation}></SongsList>
+            <SongsList 
+              songs={songs}
+              trackCount={songs.length}
+              showCollect={false} 
+              musicAnimation={musicAnimation}
+            ></SongsList>
           </Scroll>
         </SongListWrapper>
         <MusicNote ref={musicNoteRef}></MusicNote>
@@ -121,13 +147,17 @@ function Singer(props) {
 
 const mapStateToProps = state => ({
   ...state['singerInfo'],
-  songsCount: state['player']['playList'].length
+  songsCount: state['player']['playList'].length,
+  userSublist: state['user']['userSublist']
 })
 
 const mapDispatchToProps = dispatch => ({
   getSingerDataDispatch(id) {
     dispatch(changeEnterLoading(true))
     dispatch(getSingerInfo(id))
+  },
+  collectArtistDispatch(t, id) {
+    dispatch(collectArtistAndRefresh(t, id))
   }
 })
 

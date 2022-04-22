@@ -28,18 +28,14 @@ export const Container = styled.div`
 `
 
 export const List = styled.ul`
-  /* margin-top: 10px; */
   padding: 0 5px;
-  display: ${props => props.globalRank ? "flex" : ""};
+  display: ${props => props.globalRank ? "grid" : ""};
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   background: ${globalStyle["background-color"]};
-  /* &::after {
-    content: '';
-    display: block;
-    width: 32vw;
-  } */
+  grid-template-columns: auto auto auto;
+  grid-gap: 4px;
 `
 
 export const ListItem = styled.li`
@@ -64,6 +60,17 @@ export const ListItem = styled.li`
       height: 100%;
       border-radius: 3px;
     }
+    .play_count {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      font-size: ${globalStyle["font-size-ss"]};
+      color: #fff;
+      .iconfont {
+        margin-right: 2px;
+        font-size: ${globalStyle["font-size-ss"]};
+      }
+    }
     .update_frequency {
       position: absolute;
       left: 7px;
@@ -79,9 +86,13 @@ export const SongList = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 10px 10px;
+  padding: 0 5px;
   >li {
     font-size: ${globalStyle["font-size-s"]};
     color: grey;
+    padding: 0 10px;
+    height: 32%;
+    display: flex;
+    align-items: center;
   }
 `

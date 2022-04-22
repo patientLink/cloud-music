@@ -66,8 +66,14 @@ const ConfirmWrapper = styled.div`
           padding: 10px 0;
           border-top: 1px solid ${globalStyle["border-color"]};
           color: ${globalStyle["font-color-desc"]};
-          &.left{
+          &.operate_btn-left{
             border-right: 1px solid ${globalStyle["border-color"]};
+          }
+          &.operate_btn-left::after {
+            border-radius: 0 0 0 13px;
+          }
+          &.operate_btn-right::after {
+            border-radius: 0 0 13px 0;
           }
         }
       }
@@ -76,26 +82,39 @@ const ConfirmWrapper = styled.div`
 `
 
 const Confirm = forwardRef((props, ref) => {
-  const [show, setShow] = useState(false);
-  const { text, cancelBtnText, confirmBtnText } = props;
-
-  const {handleConfirm} = props;
+  const [isShow, setIsShow] = useState(false);
+  const { 
+    text, 
+    cancelBtnText, 
+    confirmBtnText, 
+    handleConfirmIndex,
+    handleConfirm
+  } = props;
 
   useImperativeHandle(ref, () => ({
     show() {
-      setShow(true);
+      setIsShow(true)
     }
-  }));
-  // style={{display: show ? "block": "none"}}
+  }))
+  
   return (
-    <CSSTransition classNames="confirm-fade" timeout={300} appear={true} in={show}>
-      <ConfirmWrapper style={{display: show ? "block": "none"}} onClick={e => e.stopPropagation()}>
+    <CSSTransition classNames="confirm-fade" timeout={300} appear={true} in={isShow}>
+      <ConfirmWrapper style={{display: isShow ? "block": "none"}} onClick={e => e.stopPropagation()}>
         <div>
           <div className="confirm_content">
             <p className="text">{text}</p>
             <div className="operate" >
-              <div className="operate_btn left" onClick={() => setShow(false)}>{cancelBtnText}</div>
-              <div className="operate_btn" onClick={() => { setShow(false); handleConfirm();}}>{confirmBtnText}</div>
+              <div 
+                className="operate_btn operate_btn-left btn-to-deep" 
+                onClick={() => { 
+                  setIsShow(false)
+                }}>{cancelBtnText}</div>
+              <div 
+                className="operate_btn operate_btn-right btn-to-deep" 
+                onClick={() => { 
+                  setIsShow(false)
+                  handleConfirm(handleConfirmIndex)
+                }}>{confirmBtnText}</div>
             </div>
           </div>
         </div>

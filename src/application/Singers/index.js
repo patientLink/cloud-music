@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Horizon from '../../baseUI/horizon-item'
 import {categoryTypes, alphaTypes} from '../../api/config'
 import {
@@ -25,8 +25,6 @@ import {renderRoutes} from 'react-router-config'
 
 
 function Singers(props) {
-  // let [category, setCategory] = useState({type: '', area: ''})
-  // let [alpha, setAlpha] = useState('')
   const {data, dispatch} = useContext(CategoryDataContext)
   const {area, type, alpha} = data
   const {
@@ -44,9 +42,6 @@ function Singers(props) {
     pullDownRefreshDispatch
   } = props
 
-  // 真实列表数量为12条
-  // const [startIndex, setStartIndex] = useState(0)
-  // const [endIndex, setEndIndex] = useState(11)
 
   let updateAlphaHandle = (val) => {
     const {key} = val
@@ -86,11 +81,9 @@ function Singers(props) {
           singerList.map((item, index) => {
             return (
               <ListItem 
+                className="btn-to-deep"
                 key={item.accountId + "" + index}
                 onClick={() => enterDetail(item.id)}
-                // onClick={(e) => {
-                //   e.stopPropagation()
-                // }}
                 >
                 <div className="img_wrapper">
                   <LazyLoad placeholder={<img width="100%" height="100%" src={require('./singer.png')} alt="music" />}>
@@ -107,11 +100,6 @@ function Singers(props) {
   }
 
   useEffect(() => {
-    // if(type === '' && area === '' && alpha === '') {
-    //   getHotSingerDispatch()
-    // } else {
-    //   updateDispatch(type, area, alpha)
-    // }
     if(!singerList.length) {
       getHotSingerDispatch()
     }
